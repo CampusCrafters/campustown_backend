@@ -11,6 +11,7 @@ git pull
 
 ## To make changes, make a PR first, do not merge directly
 to make a PR while contributing, create a new branch with the name of the feature you are working and push the code, then go to github and click create a pull request. 
+
 git add .
 
 git stash
