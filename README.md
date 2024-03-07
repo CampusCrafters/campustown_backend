@@ -1,6 +1,9 @@
 ## Setup
 git clone -b main https://github.com/CampusCrafters/CampusConnect_Backend.git
+
 npm i
+
+create a .env file in the root folder and paste the keys.
 ## Run
 npm start
 ## To get the latest repo
