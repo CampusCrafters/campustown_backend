@@ -6,7 +6,6 @@
 
    ```
    git clone -b main https://github.com/CampusCrafters/CampusConnect_Backend.git
-
    ```
 
 2. Install dependencies:
@@ -23,7 +22,6 @@ To start the server, run:
 
 ```
 npm start
-
 ```
 
 ## To setup a PostgresDB for testing using docker
@@ -34,14 +32,12 @@ Install docker
 
    ```
    docker compose up -d
-
    ```
 
 2. To stop :
 
    ```
    docker compose down
-
    ```
 
 3. Install pgadmin (GUI):
