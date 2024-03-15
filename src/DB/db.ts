@@ -35,7 +35,7 @@ export async function addUser(Name: string, Email: string, RollNumber: string, B
   
       // Manually fetch the maximum id value
       const result = await client.query('SELECT MAX(id) AS max_id FROM users');
-      const maxId = result.rows[0].max_id || 0;
+      const maxId = result.rows[0].max_id || 0; // result is a big object, so we extract max id from that object.
       const newId = maxId + 1;
   
       await client.query('INSERT INTO users (id, Name, Email, RollNumber, Batch, Branch) VALUES ($1, $2, $3, $4, $5, $6)', [
