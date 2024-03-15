@@ -7,15 +7,11 @@ const router = Router();
 router.use(bodyParser.json());
 
 router.post('/users', async (req: Request, res: Response) => {
-  const { name, email, roll_number } = req.body;
+  const { Name, Email, RollNumber, Batch, Branch } = req.body;
 
   try {
-    // Ensure table exists
     await createUsersTable();
-    
-    // Insert data into the database
-    await addUser(name, email, roll_number);
-
+    await addUser(Name, Email, RollNumber, Batch, Branch);
     res.status(201).send('User added successfully');
   } catch (error) {
     console.error('Error handling request:', error);
