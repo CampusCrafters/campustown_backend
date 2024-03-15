@@ -1,29 +1,58 @@
-## Setup
-git clone -b main https://github.com/CampusCrafters/CampusConnect_Backend.git
+# CampusConnect
 
-npm i
+## Settin up locally
 
-create a .env file in the root folder and paste the keys.
-## To start the server
+1. Clone the repository:
+
+   ```
+   git clone -b main https://github.com/CampusCrafters/CampusConnect_Backend.git
+
+   ```
+
+2. Install dependencies:
+
+   ```
+   npm install
+   ```
+
+3. Create a `.env` file in the root folder and paste the necessary keys.
+
+## Usage
+
+To start the server, run:
+
+```
 npm start
-## To get the latest repo
-git pull
 
-## To make changes, make a PR first, do not merge directly
-to make a PR while contributing, create a new branch with the name of the feature you are working and push the code, then go to github and click create a pull request. 
+```
 
-git add .
+## To setup a PostgresDB for testing using docker
 
-git stash
+Install docker
 
-git pull
+1. To start the DB server:
 
-git checkout -b feature_name
+   ```
+   docker compose up -d
 
-git stash pop
+   ```
 
-git add .
+2. To stop :
 
-git commit -m 'explain the changes'
+   ```
+   docker compose down
 
-git push --set-upstream origin feature_name
+   ```
+
+3. Install pgadmin (GUI):
+
+- Right click on servers and register a new server
+- Under general tab
+  - Name: any name
+- Under connection tab
+  - Host name: localhost
+  - Port: 5432
+  - Maintanence database: postgres
+  - Username: myuser
+  - Password: mypassword
+  - Save
