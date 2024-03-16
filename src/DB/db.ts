@@ -27,7 +27,7 @@ export async function createUsersTable(): Promise<void> {
     }
 }
 
-export async function addUser(Name: string, Email: string, RollNumber: string, Batch: number, Branch: string): Promise<void> {
+export const addUser = async (Name: string, Email: string, RollNumber: string, Batch: number, Branch: string): Promise<void> => {
     let client;
     try {
       client = await pool.connect();
