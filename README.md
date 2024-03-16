@@ -1,4 +1,4 @@
-# CampusConnect
+# CampusConnect Server
 
 ## Settin up locally
 
