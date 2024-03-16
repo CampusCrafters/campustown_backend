@@ -59,4 +59,22 @@ export async function addUser(Name: string, Email: string, RollNumber: string, B
         client.release();
       }
     }
+}
+
+export const checkEmailExists = async (Email: any) => {
+  let client;
+  try {
+    client = await pool.connect();
+    await createUsersTable();
+    const query = {
+      text: 'SELECT EXISTS (SELECT 1 FROM users WHERE email = $1)',
+      values: [Email]
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0].exists; // Returns true or false
+  } catch (error) {
+    console.error('Error checking email existence:', error);
+    throw error;
   }
+};
