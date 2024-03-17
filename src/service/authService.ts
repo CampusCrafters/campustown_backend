@@ -45,10 +45,16 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             await storeUserData(userInfo);
             const accessToken = generateJWT(userInfo);  
             console.log(accessToken);
-{/****/}
-            res.status(200).json({ success: true, accessToken: accessToken });
 
-            res.redirect('http://localhost:5173/auth');
+            // Sending accessToken as a cookie
+            res.cookie('accessToken', accessToken, { 
+                maxAge: 900000, // Cookie will expire in 15 minutes (900000 milliseconds)
+                httpOnly: true, // Cookie is accessible only by the web server
+                secure: false // Cookie will only be sent over HTTPS
+            });
+
+            // Redirect to the frontend after setting the cookie
+            res.redirect('http://localhost:5173/dashboard');
         } else {
             console.error('Access token not found');
             res.status(400).send('Access token not found'); // Respond with an error if access token is missing
@@ -58,6 +64,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         res.status(500).json({ error: err.message }); // Respond with a server error for other exceptions
     } 
 };
+
 
 export const verifyTokenService = async (req: any, res: any) => {
     console.log("reached verify");
@@ -70,7 +77,6 @@ export const verifyTokenService = async (req: any, res: any) => {
         console.log("reched not token");
         return res.status(401).json({ error: 'Unauthorized' });
     }
-    
     try {
         const decoded = await verifyJWT(token);
         req.user = decoded; // Store decoded user information in the request object
