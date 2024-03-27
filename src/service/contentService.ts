@@ -20,20 +20,34 @@ export const generateJWT = (userInfo: any) => {
         throw new Error('JWT secret key is not defined');
     }
 
-    return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); 
+    return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: '30s' }); 
 };
 
-export const verifyJWT = async (sessionToken: string) => {
+// export const verifyJWT = async (sessionToken: string) => {
+//     try {
+//         if (!process.env.JWT_SECRET_KEY) {
+//             throw new Error('JWT secret key is not defined');
+//         }    
+//         const decoded = await jwt.verify(sessionToken, process.env.JWT_SECRET_KEY);
+//         return decoded;
+//     } catch (error) {
+//         throw error;
+//     }
+// };
+
+export const verifyJWT = async (sessionToken: string): Promise<boolean> => {
     try {
         if (!process.env.JWT_SECRET_KEY) {
             throw new Error('JWT secret key is not defined');
-        }    
-        const decoded = await jwt.verify(sessionToken, process.env.JWT_SECRET_KEY);
-        return decoded;
+        }
+        
+        await jwt.verify(sessionToken, process.env.JWT_SECRET_KEY);
+        return true; // Token is valid
     } catch (error) {
-        throw error;
+        return false; // Token is invalid
     }
 };
+
 
 export const storeUserData = async (userInfo: any) => {
     try {

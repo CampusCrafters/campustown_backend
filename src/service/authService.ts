@@ -47,14 +47,14 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             console.log(accessToken);
 
             // Sending accessToken as a cookie
-            res.cookie('accessToken', accessToken, { 
-                maxAge: 900000, // Cookie will expire in 15 minutes (900000 milliseconds)
-                httpOnly: true, // Cookie is accessible only by the web server
-                secure: false // Cookie will only be sent over HTTPS
-            });
+            // res.cookie('accessToken', accessToken, { 
+            //     maxAge: 900000, // Cookie will expire in 15 minutes (900000 milliseconds)
+            //     httpOnly: true, // Cookie is accessible only by the web server
+            //     secure: false // Cookie will only be sent over HTTPS
+            // });
 
             // Redirect to the frontend after setting the cookie
-            res.redirect('http://localhost:5173/dashboard');
+            res.redirect(`http://localhost:5173/dashboard?token=${accessToken}`);
         } else {
             console.error('Access token not found');
             res.status(400).send('Access token not found'); // Respond with an error if access token is missing
@@ -69,18 +69,21 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
 export const verifyTokenService = async (req: any, res: any) => {
     console.log("reached verify");
 
-    const authHeader = req.headers['authorization'];
-    console.log(authHeader);
-    const token = authHeader && authHeader.split(' ')[1];
-    console.log(token);
+    // const authHeader = req.headers['authorization'];
+    // console.log(authHeader);
+    // const token = authHeader && authHeader.split(' ')[1];
+    // console.log(token);
+    const query = req.query;
+    console.log(query);
+    const token = req.query.token;
     if (!token) {
         console.log("reched not token");
         return res.status(401).json({ error: 'Unauthorized' });
     }
     try {
-        const decoded = await verifyJWT(token);
-        req.user = decoded; // Store decoded user information in the request object
-        res.status(200).json({ success: true, user: decoded }); // Send success response with user information
+        const status = await verifyJWT(token);
+        //req.user = decoded; // Store decoded user information in the request object
+        res.status(200).json({ success: status }); // Send success response with user information
     } catch (error) {
         res.status(401).json({ error: 'Unauthorized' });
     }
