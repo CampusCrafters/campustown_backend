@@ -7,7 +7,7 @@ const router = Router();
 router.use(bodyParser.json());
 
 router.post('/gsignin', signinService);
-router.get('/oauth', getTokensAndStoreDataService);
+router.post('/oauth', getTokensAndStoreDataService);
 router.get('/verifyToken', verifyTokenService);
 
 export default router;
