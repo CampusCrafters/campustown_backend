@@ -1,6 +1,6 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import { createUsersTable, addUser, checkEmailExists } from '../DB/db';
+import { createUsersTable, addUser, checkEmailExists } from '../../DB/db';
 
 export const getUserInfoFromGoogle = async (access_token: string) => {
     const response = await axios.post(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
@@ -23,14 +23,14 @@ export const generateJWT = (userInfo: any) => {
     return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: '12h' }); 
 };
 
-export const verifyJWT = async (sessionToken: string): Promise<boolean> => {
+export const verifyJWT = async (sessionToken: string) => {
     try {
         if (!process.env.JWT_SECRET_KEY) {
             throw new Error('JWT secret key is not defined');
         }
         const decoded = await jwt.verify(sessionToken, process.env.JWT_SECRET_KEY);
         if(decoded){
-            return true;
+            return decoded;
         } else {
             return false;
         }

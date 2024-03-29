@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import {getUserInfoFromGoogle, generateJWT, storeUserData, verifyJWT} from '../service/contentService';
+import {getUserInfoFromGoogle, generateJWT, storeUserData, verifyJWT} from './helper';
 
 export const signinService = async (req: any, res: any) => {
     // Headers setup
@@ -68,7 +68,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
 export const verifyTokenService = async (req: any, res: any) => {
     console.log("reached verifyTokenService");
     const token = req.cookies.jwt;
-    console.log('token', token);
+    //console.log('token', token);
     if (!token) {
         console.log("No token in the query");
         return res.status(400).json({ error: 'No token provided' });
@@ -76,7 +76,7 @@ export const verifyTokenService = async (req: any, res: any) => {
     try {
         const status = await verifyJWT(token);
         if(status){
-            res.status(200).json({success: status});
+            res.status(200).json({success: status, decoded: status});
         } else {
             res.status(401).json({success: status});
         }
