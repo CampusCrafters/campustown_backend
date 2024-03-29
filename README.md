@@ -42,7 +42,7 @@ Install docker
 
 3. Connect db to pgadmin (GUI):
 
-- Go to [Link Text](http://localhost:5050)
+- Go to [http://localhost:5050](http://localhost:5050)
 - Right click on servers and register a new server
 - Under general tab
   - Name: any name
