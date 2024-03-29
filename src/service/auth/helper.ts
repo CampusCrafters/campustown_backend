@@ -20,7 +20,7 @@ export const generateJWT = (userInfo: any) => {
         throw new Error('JWT secret key is not defined');
     }
 
-    return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: '12h' }); 
+    return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); 
 };
 
 export const verifyJWT = async (sessionToken: string) => {
