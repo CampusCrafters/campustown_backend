@@ -7,8 +7,7 @@ export const signinService = async (req: any, res: any) => {
     res.header("Access-Control-Allow-Credentials", 'true');
     res.header("Referrer-Policy", "no-referrer-when-downgrade");
     
-    // Redirect URL
-    const redirectURL = 'http://127.0.0.1:5000/api/v1/user/oauth';
+    const redirectURL = 'http://localhost:5173/login';
   
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
@@ -22,14 +21,16 @@ export const signinService = async (req: any, res: any) => {
       scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid',
       prompt: 'consent'
     });
-  
+    //res.redirect(authorizeUrl);
     res.json({url: authorizeUrl});
 };
 
 export const getTokensAndStoreDataService = async (req: any, res: any) => {
-    const code: string = req.query.code as string; // Asserting 'code' to be a string
+    console.log('reached getTokensAndStoreDataService');
+    const code = req.query.code;
+    console.log('Authorization code:', code);
     try {
-        const redirectURL = "http://127.0.0.1:5000/api/v1/user/oauth";
+        const redirectURL = "http://localhost:5173/login";
         const oAuth2Client = new OAuth2Client(
             process.env.CLIENT_ID,
             process.env.CLIENT_SECRET,
@@ -39,53 +40,51 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         await oAuth2Client.setCredentials(r.tokens);   // Set credentials
         console.info('Tokens acquired.');
         
-        // Check if access_token exists before proceeding
         if (r.tokens && r.tokens.access_token) {
             const userInfo = await getUserInfoFromGoogle(r.tokens.access_token);
             await storeUserData(userInfo);
-            const accessToken = generateJWT(userInfo);  
-            console.log(accessToken);
+            console.log(userInfo);
+            const verifyToken = generateJWT(userInfo);  
+            console.log(verifyToken);
 
-            // Sending accessToken as a cookie
-            // res.cookie('accessToken', accessToken, { 
-            //     maxAge: 900000, // Cookie will expire in 15 minutes (900000 milliseconds)
-            //     httpOnly: true, // Cookie is accessible only by the web server
-            //     secure: false // Cookie will only be sent over HTTPS
-            // });
+            // Set JWT as HTTP-only cookie
+            res.cookie('jwt', verifyToken, {
+                httpOnly: true,
+            });
 
-            // Redirect to the frontend after setting the cookie
-            res.redirect(`http://localhost:5173/dashboard?token=${accessToken}`);
+            // Redirect to the frontend 
+            res.redirect(`http://localhost:5173/dashboard`);
         } else {
             console.error('Access token not found');
-            res.status(400).send('Access token not found'); // Respond with an error if access token is missing
         }
     } catch (err: any) {
-        console.log('Error logging in with OAuth2 user', err);
-        res.status(500).json({ error: err.message }); // Respond with a server error for other exceptions
+        console.log('Error in getTokenAndStoreDataService', err);
+        res.status(500).json({ error: err.message }); 
     } 
 };
 
-
 export const verifyTokenService = async (req: any, res: any) => {
-    console.log("reached verify");
+    console.log("reached verifyTokenService");
+    //console.log('request query: ',req.query);
 
-    // const authHeader = req.headers['authorization'];
-    // console.log(authHeader);
-    // const token = authHeader && authHeader.split(' ')[1];
-    // console.log(token);
-    const query = req.query;
-    console.log(query);
-    const token = req.query.token;
+    //const token = req.query.token;
+    const jwtCookie = req.headers.cookie?.split(';').find((cookie: string) => cookie.trim().startsWith('jwt='));
+    const token = jwtCookie ? jwtCookie.split('=')[1] : null;
+    // console.log(jwtCookie, 'jwtCookie');
+    // console.log(token, 'token');
     if (!token) {
-        console.log("reched not token");
-        return res.status(401).json({ error: 'Unauthorized' });
+        console.log("No token in the query");
+        return res.status(400).json({ error: 'No token provided' });
     }
     try {
         const status = await verifyJWT(token);
-        //req.user = decoded; // Store decoded user information in the request object
-        res.status(200).json({ success: status }); // Send success response with user information
+        if(status){
+            res.status(200).json({success: status});
+        } else {
+            res.status(401).json({success: status});
+        }
     } catch (error) {
-        res.status(401).json({ error: 'Unauthorized' });
+        res.status(503).json({ 'Error in verify token service': error});
     }
 };
 
