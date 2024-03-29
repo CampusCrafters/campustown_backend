@@ -7,7 +7,7 @@ export const signinService = async (req: any, res: any) => {
     res.header("Access-Control-Allow-Credentials", 'true');
     res.header("Referrer-Policy", "no-referrer-when-downgrade");
     
-    const redirectURL = 'http://localhost:5173/login';
+    const redirectURL = 'http://localhost:5000/api/v1/user/oauth';
   
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
@@ -30,7 +30,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
     const code = req.query.code;
     console.log('Authorization code:', code);
     try {
-        const redirectURL = "http://localhost:5173/login";
+        const redirectURL = "http://localhost:5000/api/v1/user/oauth";
         const oAuth2Client = new OAuth2Client(
             process.env.CLIENT_ID,
             process.env.CLIENT_SECRET,
@@ -43,14 +43,16 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         if (r.tokens && r.tokens.access_token) {
             const userInfo = await getUserInfoFromGoogle(r.tokens.access_token);
             await storeUserData(userInfo);
-            console.log(userInfo);
+            //console.log(userInfo);
             const verifyToken = generateJWT(userInfo);  
-            console.log(verifyToken);
+            console.log('jwt', verifyToken);
 
-            // Set JWT as HTTP-only cookie
+            // Set JWT as HTTP-only cookies
             res.cookie('jwt', verifyToken, {
                 httpOnly: true,
             });
+
+            console.log('JWT cookie has been set:', verifyToken);
 
             // Redirect to the frontend 
             res.redirect(`http://localhost:5173/dashboard`);
@@ -65,13 +67,8 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
 
 export const verifyTokenService = async (req: any, res: any) => {
     console.log("reached verifyTokenService");
-    //console.log('request query: ',req.query);
-
-    //const token = req.query.token;
-    const jwtCookie = req.headers.cookie?.split(';').find((cookie: string) => cookie.trim().startsWith('jwt='));
-    const token = jwtCookie ? jwtCookie.split('=')[1] : null;
-    // console.log(jwtCookie, 'jwtCookie');
-    // console.log(token, 'token');
+    const token = req.cookies.jwt;
+    console.log('token', token);
     if (!token) {
         console.log("No token in the query");
         return res.status(400).json({ error: 'No token provided' });
