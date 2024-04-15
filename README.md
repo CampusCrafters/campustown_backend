@@ -40,13 +40,14 @@ Install docker
    docker compose down
    ```
 
-3. Install pgadmin (GUI):
+3. Connect db to pgadmin (GUI):
 
+- Go to [http://localhost:5050](http://localhost:5050)
 - Right click on servers and register a new server
 - Under general tab
   - Name: any name
 - Under connection tab
-  - Host name: localhost
+  - Host name: db
   - Port: 5432
   - Maintanence database: postgres
   - Username: myuser
