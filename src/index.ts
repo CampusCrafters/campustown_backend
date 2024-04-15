@@ -15,6 +15,15 @@ app.use(cookieParser());
 app.use(express.json());
 app.use('/api/v1', rootRouter);
 
+app.get("/", (req, res) => {
+  res.send("<h1>Hello, app.get('/')</h1>")
+})
+
+app.get("/health", (req, res) => {
+  res.status(200).json("Server healthy");
+  console.log(`Server healthy on port ${PORT}.`);
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
