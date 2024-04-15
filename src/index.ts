@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 })
 
 app.get("/health", (req, res) => {
-  res.status(200).json("Server healthy");
+  res.status(200).json(`Server healthy on port ${PORT}.`);
   console.log(`Server healthy on port ${PORT}.`);
 })
 
