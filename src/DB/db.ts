@@ -1,12 +1,15 @@
 import { Pool } from 'pg';
 
+// const pool = new Pool({
+//   user: 'myuser',
+//   host: 'localhost',
+//   database: 'mydatabase', 
+//   password: 'mypassword',
+//   port: 5432,
+// });
 const pool = new Pool({
-  user: 'myuser',
-  host: 'localhost',
-  database: 'mydatabase', 
-  password: 'mypassword',
-  port: 5432,
-});
+  connectionString: process.env.POSTGRES_URL ,
+})
 
 export async function createUsersTable(): Promise<void> {
     try {
