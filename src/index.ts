@@ -16,7 +16,7 @@ app.use(express.json());
 app.use('/api/v1', rootRouter);
 
 app.get("/", (req, res) => {
-  res.send("<h1>Hello, app.get('/')</h1>")
+  res.send("<h1>Hello, you are in the root path</h1>")
 })
 
 app.get("/health", (req, res) => {
