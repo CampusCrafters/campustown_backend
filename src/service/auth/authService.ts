@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import {getUserInfoFromGoogle, generateJWT, storeUserData, verifyJWT} from './helper';
+import {getUserInfoFromGoogle, generateJWT, storeUserData, verifyJWT} from './authHelper';
 
 export const signinService = async (req: any, res: any) => {
     // Headers setup
@@ -42,7 +42,12 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         
         if (r.tokens && r.tokens.access_token) {
             const userInfo = await getUserInfoFromGoogle(r.tokens.access_token);
-            await storeUserData(userInfo);
+            try{
+                await storeUserData(userInfo);
+            } catch (error) {
+                console.error('Unauhorized email domain');
+                res.status(401).send('Please use your IIITK email ID to login.');
+            }
             //console.log(userInfo);
             const verifyToken = generateJWT(userInfo);  
             console.log('jwt', verifyToken);
