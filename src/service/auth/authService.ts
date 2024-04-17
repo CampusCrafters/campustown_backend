@@ -42,13 +42,17 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         
         if (r.tokens && r.tokens.access_token) {
             const userInfo = await getUserInfoFromGoogle(r.tokens.access_token);
-            try{
+            const email = userInfo.email;
+            if (!email.endsWith('@iiitkottayam.ac.in')) {
+                console.log('Unauthorized email domain');
+                return res.redirect(`http://localhost:5173/login?error=unauthorized`);
+            }
+            try {
                 await storeUserData(userInfo);
             } catch (error) {
-                console.error('Unauhorized email domain');
-                res.status(401).send('Please use your IIITK email ID to login.');
+                console.log('Error storing user data:', error);
+                return res.status(500).send('Error storing user data');
             }
-            //console.log(userInfo);
             const verifyToken = generateJWT(userInfo);  
             console.log('jwt', verifyToken);
 
@@ -60,15 +64,17 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             console.log('JWT cookie has been set:', verifyToken);
 
             // Redirect to the frontend 
-            res.redirect(`http://localhost:5173/dashboard`);
+            return res.redirect(`http://localhost:5173/dashboard`);
         } else {
             console.error('Access token not found');
+            return res.status(500).send('Access token not found');
         }
     } catch (err: any) {
         console.log('Error in getTokenAndStoreDataService', err);
-        res.status(500).json({ error: err.message }); 
+        return res.status(500).json({ error: err.message }); 
     } 
 };
+
 
 export const verifyTokenService = async (req: any, res: any) => {
     console.log("reached verifyTokenService");

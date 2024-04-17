@@ -43,10 +43,6 @@ export const verifyJWT = async (sessionToken: string) => {
 export const storeUserData = async (userInfo: any) => {
     try {
         const email = userInfo.email;
-        if (!validateEmailDomain(email)) {
-            throw new Error('Unauthorized email domain');
-        }
-
         const exists = await checkEmailExists(email);
         if (!exists) {
             const [rollNumber, year, branch] = await generateRollNumber(email);
