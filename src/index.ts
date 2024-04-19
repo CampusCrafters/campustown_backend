@@ -9,10 +9,12 @@ const PORT = process.env.PORT;
 
 // Use cors middleware
 app.use(cors({
-  origin: "https://campus-connect-frontend-xi.vercel.app", // Replace with your frontend app's URL
+  origin: [
+    "http://localhost:5173",  // Your local frontend URL
+    "https://campus-connect-frontend-xi.vercel.app"  // Your production frontend URL
+  ],
   credentials: true
 }));
-
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/v1', rootRouter);
