@@ -7,10 +7,20 @@ import cookieParser from 'cookie-parser';
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(cors({
-  origin: 'https://campus-connect-frontend-xi.vercel.app',
+// Custom CORS middleware to handle credentials
+const corsOptions = {
+  origin: function (origin: any, callback: any) {
+    // Check if the origin is allowed
+    if (origin === 'http://localhost:5173' || origin === 'https://campus-connect-frontend-xi.vercel.app') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/v1', rootRouter);
