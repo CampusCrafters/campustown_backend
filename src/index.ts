@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(cors({
-  origin: '*', // Allow requests from any origin
+  origin: ['http://localhost:5173', 'https://campus-connect-frontend-xi.vercel.app/'],
   credentials: true
 }));
 app.use(cookieParser());
