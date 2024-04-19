@@ -9,7 +9,7 @@ const PORT = process.env.PORT;
 
 // Use cors middleware
 app.use(cors({
-  origin: true,
+  origin: "https://campus-connect-frontend-xi.vercel.app", // Replace with your frontend app's URL
   credentials: true
 }));
 
