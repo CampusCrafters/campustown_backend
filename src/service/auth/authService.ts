@@ -1,13 +1,16 @@
 import { OAuth2Client } from 'google-auth-library';
 import {getUserInfoFromGoogle, generateJWT, storeUserData, verifyJWT} from './authHelper';
 
+const backendURL = process.env.BACKEND_URL;
+const frontendURL = process.env.FRONTEND_URL;
+
 export const signinService = async (req: any, res: any) => {
     // Headers setup
-    res.header("Access-Control-Allow-Origin", 'http://localhost:5173');
+    //res.header("Access-Control-Allow-Origin", 'http://localhost:5173');
     res.header("Access-Control-Allow-Credentials", 'true');
     res.header("Referrer-Policy", "no-referrer-when-downgrade");
     
-    const redirectURL = 'http://localhost:5000/api/v1/user/oauth';
+    const redirectURL = `${backendURL}/api/v1/user/oauth`;
   
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
@@ -30,7 +33,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
     const code = req.query.code;
     console.log('Authorization code:', code);
     try {
-        const redirectURL = "http://localhost:5000/api/v1/user/oauth";
+        const redirectURL = `${backendURL}/api/v1/user/oauth`;
         const oAuth2Client = new OAuth2Client(
             process.env.CLIENT_ID,
             process.env.CLIENT_SECRET,
@@ -45,7 +48,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             const email = userInfo.email;
             if (!email.endsWith('@iiitkottayam.ac.in')) {
                 console.log('Unauthorized email domain');
-                return res.redirect(`http://localhost:5173/login?error=unauthorized`);
+                return res.redirect(`${frontendURL}/login?error=unauthorized`);
             }
             try {
                 await storeUserData(userInfo);
@@ -64,7 +67,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             console.log('JWT cookie has been set:', verifyToken);
 
             // Redirect to the frontend 
-            return res.redirect(`http://localhost:5173/dashboard`);
+            return res.redirect(`${frontendURL}/dashboard`);
         } else {
             console.error('Access token not found');
             return res.status(500).send('Access token not found');
