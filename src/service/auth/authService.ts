@@ -62,6 +62,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             // Set JWT as HTTP-only cookies
             res.cookie('jwt', verifyToken, {
                 httpOnly: true,
+                secure: true, // Ensures cookies are sent over HTTPS
             });
 
             console.log('JWT cookie has been set:', verifyToken);
