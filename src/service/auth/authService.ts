@@ -63,6 +63,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             res.cookie('jwt', verifyToken, {
                 httpOnly: true,
                 secure: true, // Ensures cookies are sent over HTTPS
+                sameSite: 'None' // Allow cross-site requests to send the cookie
             });
 
             console.log('JWT cookie has been set:', verifyToken);
