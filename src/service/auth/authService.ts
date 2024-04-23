@@ -60,16 +60,20 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
             console.log('jwt', verifyToken);
 
             // Set JWT as HTTP-only cookies
-            res.cookie('jwt', verifyToken, {
-                httpOnly: true,
-                secure: true, // Ensures cookies are sent over HTTPS
-                sameSite: 'None' // Allow cross-site requests to send the cookie
-            });
-
-            console.log('JWT cookie has been set:', verifyToken);
-
-            // Redirect to the frontend 
-            return res.redirect(`${frontendURL}/dashboard`);
+            try {
+                // Set the cookie
+                await res.cookie('jwt', verifyToken, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'None'
+                });
+                // Redirect after setting the cookie
+                res.redirect(`${frontendURL}/dashboard`);
+            } catch (error) {
+                console.error('Error setting cookie:', error);
+                res.status(500).send('Error setting cookie');
+            }
+            
         } else {
             console.error('Access token not found');
             return res.status(500).send('Access token not found');
