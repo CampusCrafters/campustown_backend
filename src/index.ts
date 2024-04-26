@@ -30,7 +30,7 @@ app.use('/api/v1', rootRouter);
 
 // Example root path handler
 app.get("/", (req: Request, res: Response) => {
-  res.send("<h1>Hello, you are in the root path</h1>")
+  res.send("<h1>Hello, you are in the root path of campus connect backend</h1>")
 });
 
 // Health check endpoint
