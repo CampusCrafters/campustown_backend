@@ -71,7 +71,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         await res.cookie("jwt", verifyToken, {
           httpOnly: true,
           secure: true,
-          sameSite: "None",
+          sameSite: "lax",
         });
       } catch (error) {
         console.error("Error setting cookie:", error);
