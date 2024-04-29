@@ -11,7 +11,8 @@ const PORT = process.env.PORT;
 const corsOptions = {
   origin: [
     "http://localhost:5173",  // Your local frontend URL
-    "https://campus-connect-frontend-xi.vercel.app"  // Your production frontend URL
+    "https://campus-connect-frontend-xi.vercel.app",  // Your production frontend URL
+    "https://campusconnect-frontend.onrender.com"
   ],
   credentials: true
 };
