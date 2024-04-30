@@ -65,7 +65,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
       const verifyToken = generateJWT(userInfo);
       console.log("jwt", verifyToken);
 
-      // Set JWT as HTTP-only cookies
+      // Set JWT as HTTP-only cookies // not working
       try {
         // Set the cookie
         await res.cookie("jwt", verifyToken, {
