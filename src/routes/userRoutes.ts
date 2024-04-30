@@ -8,7 +8,7 @@ router.use(bodyParser.json());
 
 router.post('/gsignin', signinService);
 router.get('/oauth', getTokensAndStoreDataService);
-router.post('/verifyToken', verifyTokenService);
+router.get('/verifyToken', verifyTokenService);
 
 //router.get('/viewProfile', viewProfileService);
 //router.post('/editProfile', editProfileService);
