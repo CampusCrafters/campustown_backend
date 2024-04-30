@@ -65,11 +65,20 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
       const verifyToken = generateJWT(userInfo);
       console.log("jwt", verifyToken);
 
-      // Store JWT token in local storage
-      localStorage.setItem("jwt", verifyToken);
-
-      // Redirect after setting the token
-      window.location.href = `${frontendURL}/dashboard`;
+      // Set JWT as HTTP-only cookies // not working
+      try {
+        // Set the cookie
+        await res.cookie("jwt", verifyToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+        });
+      } catch (error) {
+        console.error("Error setting cookie:", error);
+        res.status(500).send("Error setting cookie");
+      }
+      // Redirect after setting the cookie
+      res.redirect(`${frontendURL}/dashboard`);
       
     } else {
       console.error("Access token not found");
@@ -82,11 +91,11 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
 };
 
 export const verifyTokenService = async (req: any, res: any) => {
-  // Retrieve token from local storage
-  const token = localStorage.getItem("jwt");
-
+  console.log("reached verifyTokenService");
+  const token = req.cookies.jwt;
+  //console.log('token', token);
   if (!token) {
-    console.log("No token in local storage");
+    console.log("No token in the query");
     return res.status(400).json({ error: "No token provided" });
   }
   try {
