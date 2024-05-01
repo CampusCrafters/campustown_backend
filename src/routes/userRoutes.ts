@@ -13,7 +13,6 @@ router.post('/verifyToken', verifyTokenService);
 
 router.get('/viewProfile', viewProfileService);
 router.put('/editProfile', editProfileService);
-//router.delete('/deleteProfileInfo', deleteProfileInfoService);
 
 //router.post('/addMyProject', addMyProjectService);
 //router.put('/editMyProject', editMyProjectService);

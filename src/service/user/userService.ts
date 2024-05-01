@@ -29,10 +29,8 @@ export const editProfileService = async (req: any, res: any) => {
     const decoded = await verifyJWT(token);
     if (decoded && typeof decoded === "object") {
       const email = decoded.email;
-
       const updatedInfo = req.body;
       await updateUserProfile(email, updatedInfo);
-
       res.status(200).json("User info updated successfully");
     }
   } catch (error) {

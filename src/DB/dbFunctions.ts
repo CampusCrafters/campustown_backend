@@ -33,8 +33,6 @@ export const getUserProfile = async (email: string) => {
   let client;
   try {
     client = await pool.connect();
-    await createUsersTable(); 
-
     const query = {
       text: "SELECT * FROM users WHERE email = $1",
       values: [email],
@@ -52,8 +50,6 @@ export const updateUserProfile = async (email: string, updatedInfo: any): Promis
   let client;
   try {
     client = await pool.connect();
-    await createUsersTable(); 
-    
     await client.query("BEGIN");
 
     const fields = Object.keys(updatedInfo);
