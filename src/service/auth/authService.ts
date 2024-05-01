@@ -81,12 +81,10 @@ export const verifyTokenService = async (req: any, res: any) => {
     return res.status(400).json({ error: "No token provided" });
   }
   try {
-    const status = await verifyJWT(token);
-    if (status) {
-      res.status(200).json({ success: status, decoded: status });
-    } else {
-      res.status(401).json({ success: status });
-    }
+    const decoded = await verifyJWT(token);
+    if (decoded) {
+      res.status(200).json({ decoded: decoded });
+    } 
   } catch (error) {
     res.status(500).json({ "Error in verify token service": error });
   }
