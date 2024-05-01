@@ -1,4 +1,4 @@
-import {pool, createUsersTable, createUserProjectsTable, createUserExperienceTable} from "./tables";
+import { pool, createUsersTable, createUserProjectsTable, createUserExperienceTable } from "./tables";
 
 export const addUser = async (name: string, email: string, rollnumber: string, batch: number, branch: string): Promise<void> => {
   let client;
@@ -29,6 +29,23 @@ export const addUser = async (name: string, email: string, rollnumber: string, b
   }
 };
 
+export const getUserProfile = async (email: string) => {
+  let client;
+  try {
+    client = await pool.connect();
+    await createUsersTable();
+    const query = {
+      text: "SELECT * FROM users WHERE email = $1",
+      values: [email],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error getting user profile:", error);
+    throw error;
+  }
+}
 
 export const checkEmailExists = async (Email: any) => {
   let client;
