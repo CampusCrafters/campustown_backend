@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
-import {signinService, getTokensAndStoreDataService, verifyTokenService} from '../service/auth/authService'
-import {viewProfileService} from '../service/user/userService'
+import { signinService, getTokensAndStoreDataService, verifyTokenService } from '../service/auth/authService'
+import { viewProfileService, editProfileService } from '../service/user/userService'
 
 const router = Router();
 router.use(bodyParser.json());
@@ -12,7 +12,7 @@ router.get('/oauth', getTokensAndStoreDataService);
 router.post('/verifyToken', verifyTokenService);
 
 router.get('/viewProfile', viewProfileService);
-//router.put('/editProfile', editProfileService);
+router.put('/editProfile', editProfileService);
 //router.delete('/deleteProfileInfo', deleteProfileInfoService);
 
 //router.post('/addMyProject', addMyProjectService);
