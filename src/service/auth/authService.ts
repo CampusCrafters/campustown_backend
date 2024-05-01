@@ -1,27 +1,19 @@
 import { OAuth2Client } from "google-auth-library";
-import {
-  getUserInfoFromGoogle,
-  generateJWT,
-  storeUserData,
-  verifyJWT,
-} from "./authHelper";
+import { getUserInfoFromGoogle, generateJWT, storeUserData, verifyJWT } from "./authHelper";
 
 const backendURL = process.env.BACKEND_URL;
 const frontendURL = process.env.FRONTEND_URL;
-
-export const signinService = async (req: any, res: any) => {
-  // Headers setup
-  //res.header("Access-Control-Allow-Origin", 'http://localhost:5173');
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Referrer-Policy", "no-referrer-when-downgrade");
-
-  const redirectURL = `${backendURL}/api/v1/user/oauth`;
-
-  const oAuth2Client = new OAuth2Client(
+const redirectURL = `${backendURL}/api/v1/user/oauth`;
+const oAuth2Client = new OAuth2Client(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
     redirectURL
   );
+
+export const signinService = async (req: any, res: any) => {
+  // Headers setup
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Referrer-Policy", "no-referrer-when-downgrade");
 
   // Generate the URL for consent dialog
   const authorizeUrl = oAuth2Client.generateAuthUrl({
@@ -30,21 +22,12 @@ export const signinService = async (req: any, res: any) => {
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
     prompt: "consent",
   });
-  //res.redirect(authorizeUrl);
   res.json({ url: authorizeUrl });
 };
 
 export const getTokensAndStoreDataService = async (req: any, res: any) => {
-  console.log("reached getTokensAndStoreDataService");
   const code = req.query.code;
-  console.log("Authorization code:", code);
   try {
-    const redirectURL = `${backendURL}/api/v1/user/oauth`;
-    const oAuth2Client = new OAuth2Client(
-      process.env.CLIENT_ID,
-      process.env.CLIENT_SECRET,
-      redirectURL
-    );
     const r = await oAuth2Client.getToken(code); // Get token
     await oAuth2Client.setCredentials(r.tokens); // Set credentials
     console.info("Tokens acquired.");
@@ -93,7 +76,6 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
 export const verifyTokenService = async (req: any, res: any) => {
   console.log("reached verifyTokenService");
   const token = req.cookies.jwt;
-  //console.log('token', token);
   if (!token) {
     console.log("No token in the query");
     return res.status(400).json({ error: "No token provided" });
