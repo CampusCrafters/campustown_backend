@@ -88,6 +88,6 @@ export const verifyTokenService = async (req: any, res: any) => {
       res.status(401).json({ success: status });
     }
   } catch (error) {
-    res.status(503).json({ "Error in verify token service": error });
+    res.status(500).json({ "Error in verify token service": error });
   }
 };
