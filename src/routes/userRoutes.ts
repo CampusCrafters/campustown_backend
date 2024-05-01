@@ -12,6 +12,17 @@ router.get('/oauth', getTokensAndStoreDataService);
 router.post('/verifyToken', verifyTokenService);
 
 router.get('/viewProfile', viewProfileService);
-//router.post('/editProfile', editProfileService);
+//router.put('/editProfile', editProfileService);
+//router.delete('/deleteProfileInfo', deleteProfileInfoService);
+
+//router.post('/addMyProject', addMyProjectService);
+//router.put('/editMyProject', editMyProjectService);
+//router.delete('/deleteMyProject', deleteMyProjectService);
+
+//router.post('/addExperience', addExperienceService);
+//router.put('/editExperience', editExperienceService);
+//router.delete('/deleteExperience', deleteExperienceService);
+
+// router.get('/myApplications', getMyApplicationsService);
 
 export default router;
