@@ -33,7 +33,8 @@ export const getUserProfile = async (email: string) => {
   let client;
   try {
     client = await pool.connect();
-    await createUsersTable();
+    await createUsersTable(); 
+
     const query = {
       text: "SELECT * FROM users WHERE email = $1",
       values: [email],
@@ -46,6 +47,39 @@ export const getUserProfile = async (email: string) => {
     throw error;
   }
 }
+
+export const updateUserProfile = async (email: string, updatedInfo: any): Promise<void> => {
+  let client;
+  try {
+    client = await pool.connect();
+    await createUsersTable(); 
+    
+    await client.query("BEGIN");
+
+    const fields = Object.keys(updatedInfo);
+
+    // Construct the SQL query with placeholders for each field
+    const query = `UPDATE users SET ${fields.map((field, index) => `${field} = $${index + 1}`).join(', ')} WHERE email = $${fields.length + 1}`;
+    
+    // Extract values from the updatedInfo object
+    const values = [...Object.values(updatedInfo), email];
+
+    // Execute the SQL query
+    await client.query(query, values);
+
+    await client.query("COMMIT");
+  } catch (error) {
+    if (client) {
+      await client.query("ROLLBACK");
+    }
+    console.error("Error updating user profile:", error);
+    throw error;
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+};
 
 export const checkEmailExists = async (Email: any) => {
   let client;
