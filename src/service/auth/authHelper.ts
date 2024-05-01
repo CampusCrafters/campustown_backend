@@ -1,6 +1,6 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import { createUsersTable, addUser, checkEmailExists } from '../../DB/db';
+import { addUser, checkEmailExists } from '../../DB/dbFunctions';
 
 export const getUserInfoFromGoogle = async (access_token: string) => {
     const response = await axios.post(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
@@ -39,21 +39,19 @@ export const verifyJWT = async (sessionToken: string) => {
     }
 };
 
-
 export const storeUserData = async (userInfo: any) => {
     try {
-        const email = userInfo.email;
-        const exists = await checkEmailExists(email);
+        const Email = userInfo.email;
+        const exists = await checkEmailExists(Email);
         if (!exists) {
-            const [rollNumber, year, branch] = await generateRollNumber(email);
-            const Name = `${userInfo.name.replace(/ -IIITK$/, '').replace(/"/g, '')}`;
-            const Email = email;
-            const RollNumber = rollNumber;
-            const Batch = parseInt(year, 10); // Convert year to a number
-            const Branch = branch;
+            const [rollNumber, year, Branch] = await generateRollNumber(Email);
+            const name = `${userInfo.name.replace(/ -IIITK$/, '').replace(/"/g, '')}`;
+            const email = Email;
+            const rollnumber = rollNumber;
+            const batch = parseInt(year, 10); // Convert year to a number
+            const branch = Branch;
 
-            await createUsersTable(); 
-            await addUser(Name, Email, RollNumber, Batch, Branch); 
+            await addUser(name, email, rollnumber, batch, branch); 
         }
     } catch (error) {
         console.error('Error handling request:', error);
@@ -85,8 +83,3 @@ export const generateRollNumber = async (email: string) => {
     const rollNumber = `${year}${branch}${rollNumberSuffix.padStart(4, '0')}`;   // Formatting the roll number
     return [rollNumber, year, branch];
 }
-
-export const validateEmailDomain = (email: string) => {
-    const allowedDomain = 'iiitkottayam.ac.in';
-    return email.endsWith('@' + allowedDomain);
-};
