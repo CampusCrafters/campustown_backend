@@ -1,3 +1,4 @@
+import exp from "constants";
 import { pool, createUsersTable, createUserProjectsTable, createUserExperienceTable } from "./tables";
 
 export const addUser = async (name: string, email: string, rollnumber: string, batch: number, branch: string): Promise<void> => {
@@ -96,6 +97,32 @@ export const addMyProject = async (userId: number, projectInfo: object): Promise
     }
     console.error("Error adding project to database:", error);
     throw new Error('Error adding project to database');
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
+
+export const editMyProject = async (userId: number, projectInfo: object): Promise<void> => {
+  let client;
+  try {
+    client = await pool.connect();
+    await client.query("BEGIN");
+
+    const fields = Object.keys(projectInfo);
+
+    const query = `UPDATE user_projects SET ${fields.map((field, index) => `${field} = $${index + 1}`).join(', ')} WHERE user_id = $${fields.length + 1}`;
+    const values = [...Object.values(projectInfo), userId];
+
+    await client.query(query, values);
+    await client.query("COMMIT");
+  } catch (error) {
+    if (client) {
+      await client.query("ROLLBACK");
+    }
+    console.error("Error editing project in database:", error);
+    throw new Error('Error editing project in database');
   } finally {
     if (client) {
       client.release();
