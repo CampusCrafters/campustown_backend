@@ -120,16 +120,23 @@ export const getProfileProject = async (userId: number) => {
   }
 }
 
-export const editProfileProject = async (userId: number, projectInfo: object): Promise<void> => {
+export const editProfileProject = async (user_project_id: number, projectInfo: object): Promise<void> => {  
   let client;
   try {
     client = await pool.connect();
     await client.query("BEGIN");
 
     const fields = Object.keys(projectInfo);
-
-    const query = `UPDATE user_projects SET ${fields.map((field, index) => `${field} = $${index + 1}`).join(', ')} WHERE user_id = $${fields.length + 1}`;
-    const values = [...Object.values(projectInfo), userId];
+    const query = `UPDATE user_projects SET ${fields
+      .map((field, index) => {
+        // If the field is "group", enclose it in double quotes
+        const fieldName = field === 'group' ? `"${field}"` : field;
+        return `${fieldName} = $${index + 1}`;
+      })
+      .join(', ')}` + ` WHERE user_project_id = $${fields.length + 1}`;
+     
+    // Extract values from the updatedInfo object
+    const values = [...Object.values(projectInfo), user_project_id];
 
     await client.query(query, values);
     await client.query("COMMIT");
@@ -137,12 +144,29 @@ export const editProfileProject = async (userId: number, projectInfo: object): P
     if (client) {
       await client.query("ROLLBACK");
     }
-    console.error("Error editing project in database:", error);
-    throw new Error('Error editing project in database');
+    console.error("Error updating project on database:", error);
+    throw new Error('Error updating project on database');
   } finally {
     if (client) {
       client.release();
     }
+  }
+}
+
+export const checkProfileProjectOwner = async (userId: number, user_project_id: number) => {
+  let client;
+  try {
+    client = await pool.connect();
+    const query = {
+      text: "SELECT EXISTS (SELECT 1 FROM user_projects WHERE user_id = $1 AND user_project_id = $2)",
+      values: [userId, user_project_id],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0].exists;
+  } catch (error) {
+    console.error("Error checking project owner in database:", error);
+    throw new Error('Error checking project owner in database');
   }
 }
 

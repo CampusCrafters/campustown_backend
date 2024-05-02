@@ -8,6 +8,7 @@ router.use(bodyParser.json());
 // router.post('/postProject', postProjectService);
 // router.get('/projects', getAllProjectsService);
 // router.get('/myProjects', getMyProjectsService);
+// router.put('/editProject', editProjectService);
 
 // router.post('/applyProject', addApplicationService);
 // router.put('/editApplication', editApplicationService);

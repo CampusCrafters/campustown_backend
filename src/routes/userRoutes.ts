@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
+import { authMiddleware } from '../middlewares/authMiddleware';
 import { signinService, getTokensAndStoreDataService, verifyTokenService } from '../service/auth/authService'
 import { viewProfileService, editProfileService, addProfileProjectService, viewProfileProjectService, editProfileProjectService, deleteProfileProjectService } from '../service/user/userService'
 
@@ -11,18 +12,19 @@ router.post('/gsignin', signinService);
 router.get('/oauth', getTokensAndStoreDataService);
 router.post('/verifyToken', verifyTokenService);
 
-router.get('/viewProfile', viewProfileService);
-router.put('/editProfile', editProfileService);
+router.get('/viewProfile', authMiddleware, viewProfileService);
+router.put('/editProfile', authMiddleware, editProfileService);
 
-router.post('/addProfileProject', addProfileProjectService);
 router.get('/viewProfileProject', viewProfileProjectService);
-router.put('/editProfileProject', editProfileProjectService);
-router.delete('/deleteProfileProject', deleteProfileProjectService);
+router.post('/addProfileProject', authMiddleware, addProfileProjectService);
+router.put('/editProfileProject', authMiddleware, editProfileProjectService);
+router.delete('/deleteProfileProject', authMiddleware, deleteProfileProjectService);
 
-//router.post('/addExperience', addExperienceService);
-//router.put('/editExperience', editExperienceService);
-//router.delete('/deleteExperience', deleteExperienceService);
+//router.get('/viewExperience', viewExperienceService);
+//router.post('/addExperience', authMiddleware, addExperienceService);
+//router.put('/editExperience', authMiddleware, editExperienceService);
+//router.delete('/deleteExperience', authMiddleware, deleteExperienceService);
 
-// router.get('/myApplications', getMyApplicationsService);
+// router.get('/myApplications', authMiddleware, getMyApplicationsService);
 
 export default router;
