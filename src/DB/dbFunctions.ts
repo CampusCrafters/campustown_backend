@@ -103,6 +103,7 @@ export const addProfileProject = async (userId: number, projectInfo: object): Pr
     }
   }
 }
+
 export const getProfileProject = async (userId: number) => {
   let client;
   try {
