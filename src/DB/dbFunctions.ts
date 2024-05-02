@@ -78,7 +78,7 @@ export const updateUserProfile = async (email: string, updatedInfo: any): Promis
   }
 };
 
-export const addMyProject = async (userId: number, projectInfo: object): Promise<void> => {
+export const addProfileProject = async (userId: number, projectInfo: object): Promise<void> => {
   let client;
   try {
     client = await pool.connect();
@@ -103,8 +103,24 @@ export const addMyProject = async (userId: number, projectInfo: object): Promise
     }
   }
 }
+export const getProfileProject = async (userId: number) => {
+  let client;
+  try {
+    client = await pool.connect();
+    const query = {
+      text: "SELECT * FROM user_projects WHERE user_id = $1",
+      values: [userId],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error("Error getting profile projects from database:", error);
+    throw new Error('Error getting profile projects from database');
+  }
+}
 
-export const editMyProject = async (userId: number, projectInfo: object): Promise<void> => {
+export const editProfileProject = async (userId: number, projectInfo: object): Promise<void> => {
   let client;
   try {
     client = await pool.connect();

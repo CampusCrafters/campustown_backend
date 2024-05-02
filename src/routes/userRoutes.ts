@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
 import { signinService, getTokensAndStoreDataService, verifyTokenService } from '../service/auth/authService'
-import { viewProfileService, editProfileService, addMyProjectService, editMyProjectService } from '../service/user/userService'
+import { viewProfileService, editProfileService, addProfileProjectService, viewProfileProjectService, editProfileProjectService, deleteProfileProjectService } from '../service/user/userService'
 
 const router = Router();
 router.use(bodyParser.json());
@@ -14,9 +14,10 @@ router.post('/verifyToken', verifyTokenService);
 router.get('/viewProfile', viewProfileService);
 router.put('/editProfile', editProfileService);
 
-router.post('/addMyProject', addMyProjectService);
-router.put('/editMyProject', editMyProjectService);
-//router.delete('/deleteMyProject', deleteMyProjectService);
+router.post('/addProfileProject', addProfileProjectService);
+router.get('/viewProfileProject', viewProfileProjectService);
+router.put('/editProfileProject', editProfileProjectService);
+router.delete('/deleteProfileProject', deleteProfileProjectService);
 
 //router.post('/addExperience', addExperienceService);
 //router.put('/editExperience', editExperienceService);
