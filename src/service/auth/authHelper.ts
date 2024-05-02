@@ -35,7 +35,7 @@ export const verifyJWT = async (sessionToken: string) => {
             return false;
         }
     } catch (error) {
-        throw new Error('Error verifying JWT');
+        throw new Error('Error verifying JWT (Unauthorized)');
     }
 };
 
@@ -54,8 +54,8 @@ export const storeUserData = async (userInfo: any) => {
             await addUser(name, email, rollnumber, batch, branch); 
         }
     } catch (error) {
-        console.error('Error handling request:', error);
-        throw error; 
+        console.error('Error storing user data:', error);
+        throw new Error('Error storing user data');
     }
 };
 

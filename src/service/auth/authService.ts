@@ -41,9 +41,9 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
       }
       try {
         await storeUserData(userInfo);
-      } catch (error) {
+      } catch (error: any) {
         console.log("Error storing user data:", error);
-        return res.status(500).send("Error storing user data");
+        return res.status(500).json(error.message);
       }
       const verifyToken = generateJWT(userInfo);
       console.log("jwt", verifyToken);

@@ -20,8 +20,8 @@ export const addUser = async (name: string, email: string, rollnumber: string, b
     if (client) {
       await client.query("ROLLBACK");
     }
-    console.error('Error adding user:', error);
-    throw new Error('Error adding user');
+    console.error('Error adding user to database:', error);
+    throw new Error('Error adding user to database');
   } finally {
     if (client) {
       client.release();
@@ -41,8 +41,8 @@ export const getUserProfile = async (email: string) => {
     client.release();
     return result.rows[0];
   } catch (error) {
-    console.error("Error getting user profile:", error);
-    throw new Error('Error getting user profile');
+    console.error("Error getting user profile from database:", error);
+    throw new Error('Error getting user profile from database');
   }
 }
 
@@ -68,8 +68,8 @@ export const updateUserProfile = async (email: string, updatedInfo: any): Promis
     if (client) {
       await client.query("ROLLBACK");
     }
-    console.error("Error updating user profile:", error);
-    throw new Error('Error updating user profile');
+    console.error("Error updating user profile on database:", error);
+    throw new Error('Error updating user profile on database');
   } finally {
     if (client) {
       client.release();
@@ -94,8 +94,8 @@ export const addMyProject = async (userId: number, projectInfo: object): Promise
     if (client) {
       await client.query("ROLLBACK");
     }
-    console.error("Error adding project:", error);
-    throw new Error('Error adding project');
+    console.error("Error adding project to database:", error);
+    throw new Error('Error adding project to database');
   } finally {
     if (client) {
       client.release();
@@ -116,7 +116,7 @@ export const checkEmailExists = async (Email: any) => {
     client.release();
     return result.rows[0].exists; // Returns true or false
   } catch (error) {
-    console.error("Error checking email existence:", error);
-    throw new Error('Error checking email existence');
+    console.error("Error checking email existence in database:", error);
+    throw new Error('Error checking email existence in database');
   }
 };
