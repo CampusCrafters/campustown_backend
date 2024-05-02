@@ -20,8 +20,8 @@ export const addUser = async (name: string, email: string, rollnumber: string, b
     if (client) {
       await client.query("ROLLBACK");
     }
-    console.error("Error adding user:", error);
-    throw error;
+    console.error('Error adding user:', error);
+    throw new Error('Error adding user');
   } finally {
     if (client) {
       client.release();
@@ -42,7 +42,7 @@ export const getUserProfile = async (email: string) => {
     return result.rows[0];
   } catch (error) {
     console.error("Error getting user profile:", error);
-    throw error;
+    throw new Error('Error getting user profile');
   }
 }
 
@@ -69,7 +69,7 @@ export const updateUserProfile = async (email: string, updatedInfo: any): Promis
       await client.query("ROLLBACK");
     }
     console.error("Error updating user profile:", error);
-    throw error;
+    throw new Error('Error updating user profile');
   } finally {
     if (client) {
       client.release();
@@ -95,7 +95,7 @@ export const addMyProject = async (userId: number, projectInfo: object): Promise
       await client.query("ROLLBACK");
     }
     console.error("Error adding project:", error);
-    throw error;
+    throw new Error('Error adding project');
   } finally {
     if (client) {
       client.release();
@@ -117,6 +117,6 @@ export const checkEmailExists = async (Email: any) => {
     return result.rows[0].exists; // Returns true or false
   } catch (error) {
     console.error("Error checking email existence:", error);
-    throw error;
+    throw new Error('Error checking email existence');
   }
 };

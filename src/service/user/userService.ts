@@ -13,8 +13,8 @@ export const viewProfileService = async (req: any, res: any) => {
       const profileInfo = await getUserProfile(email);
       res.status(200).json(profileInfo);
     }
-  } catch (error) {
-    res.status(401).json("Unauthorized access");
+  } catch (error: any) {
+    res.status(401).json(error.message);
   }
 };
 
@@ -31,8 +31,8 @@ export const editProfileService = async (req: any, res: any) => {
       await updateUserProfile(email, updatedInfo);
       res.status(200).json("User info updated successfully");
     }
-  } catch (error) {
-    res.status(401).json("Error in updateUserProfileService");
+  } catch (error: any) {
+    res.status(401).json(error.message);
   }
 };
 
@@ -50,7 +50,7 @@ export const addMyProjectService = async (req: any, res: any) => {
       await addMyProject(user_id, projectInfo);
       res.status(200).json("Project added successfully");
     }
-  } catch (error) {
-    res.status(401).json("Error in addMyProjectService");
+  } catch (error: any) {
+    res.status(401).json(error.message);
   }
 }
