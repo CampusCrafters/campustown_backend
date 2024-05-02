@@ -1,4 +1,3 @@
-import exp from "constants";
 import { pool, createUsersTable, createUserProjectsTable, createUserExperienceTable } from "./tables";
 
 export const addUser = async (name: string, email: string, rollnumber: string, batch: number, branch: string): Promise<void> => {
