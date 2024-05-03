@@ -69,21 +69,21 @@ export const deleteProfileProjectService = async (req: any, res: any) => {
   }
 }
 
-export const viewExperienceService = async (req: any, res: any) => {
-  try {
-    const profileExperience = await getProfileExperience(req.query.user_id);
-    res.status(200).json(profileExperience);
-  } catch (error: any) {
-    res.status(401).json(error.message);
-  }
-}
-
 export const addExperienceService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const experienceInfo = req.body;
     await addProfileExperience(user_id, experienceInfo);
     res.status(200).json("Experience added successfully");
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
+
+export const viewExperienceService = async (req: any, res: any) => {
+  try {
+    const profileExperience = await getProfileExperience(req.query.user_id);
+    res.status(200).json(profileExperience);
   } catch (error: any) {
     res.status(401).json(error.message);
   }
