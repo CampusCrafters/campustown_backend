@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import bodyParser from 'body-parser';
 
 const router = Router();
