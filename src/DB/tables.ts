@@ -76,15 +76,23 @@ export async function createUserExperienceTable(): Promise<void> {
         tech_stack TEXT[],
         contributions TEXT[]
       )
+<<<<<<< Updated upstream
     `;
     await pool.query(query);
     console.log('Table "user_experience" successfully created or already exists');
+=======
+    `);
+    console.log(
+      'Table "user_experience" successfully created or already exists'
+    );
+>>>>>>> Stashed changes
   } catch (error) {
     console.error("Error creating user_experience table:", error);
     throw error;
   }
 }
 
+<<<<<<< Updated upstream
 export async function createUserApplicationsTable(): Promise<void> {
   try {
     const query = `
@@ -128,3 +136,29 @@ export async function createProjectsTable(): Promise<void> {
     console.error(`Error creating Projects table: ${error}`);
   }
 }
+=======
+export async function createProjectsTable(): Promise<void> {
+  try {
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS projects (
+      project_id SERIAL PRIMARY KEY,
+      host INTEGER REFERENCES users(user_id),
+      members TEXT[],
+      project_title VARCHAR(255),
+      description TEXT,
+      domain VARCHAR(255),
+      required_roles TEXT[],
+      start_date DATE,
+      end_date DATE, 
+      applicants TEXT[],
+      shortlisted TEXT[],
+      rejected TEXT[]
+    )
+    `);
+    console.log('Table "projects" successfully created or already exists');
+  } catch (error) {
+    console.error("Error creating projects table:", error);
+    throw error;
+  }
+}
+>>>>>>> Stashed changes
