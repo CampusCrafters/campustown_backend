@@ -1,11 +1,3 @@
-<<<<<<< Updated upstream
-import 'dotenv/config';
-import { Router } from 'express';
-import bodyParser from 'body-parser';
-import { authMiddleware } from '../middlewares/authMiddleware';
-import { signinService, getTokensAndStoreDataService, verifyTokenService } from '../service/auth/authService'
-import { viewProfileService, editProfileService, addProfileProjectService, viewProfileProjectService, editProfileProjectService, deleteProfileProjectService, viewExperienceService, addExperienceService, editExperienceService, deleteExperienceService } from '../service/user/userService'
-=======
 import "dotenv/config";
 import { Router } from "express";
 import bodyParser from "body-parser";
@@ -22,8 +14,11 @@ import {
   viewProfileProjectService,
   editProfileProjectService,
   deleteProfileProjectService,
+  viewExperienceService,
+  addExperienceService,
+  editExperienceService,
+  deleteExperienceService,
 } from "../service/user/userService";
->>>>>>> Stashed changes
 
 const router = Router();
 router.use(bodyParser.json());
@@ -43,10 +38,10 @@ router.delete(
   deleteProfileProjectService
 );
 
-router.get('/viewExperience', viewExperienceService);
-router.post('/addExperience', authMiddleware, addExperienceService);
-router.put('/editExperience', authMiddleware, editExperienceService);
-router.delete('/deleteExperience', authMiddleware, deleteExperienceService);
+router.get("/viewExperience", viewExperienceService);
+router.post("/addExperience", authMiddleware, addExperienceService);
+router.put("/editExperience", authMiddleware, editExperienceService);
+router.delete("/deleteExperience", authMiddleware, deleteExperienceService);
 
 // router.get('/myApplications', authMiddleware, getMyApplicationsService);
 
