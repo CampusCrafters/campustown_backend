@@ -3,12 +3,6 @@ import { pool, createUsersTable, createUserProjectsTable, createUserExperienceTa
 export const addUser = async (name: string, email: string, rollnumber: string, batch: number, branch: string): Promise<void> => {
   try {
     const client = await pool.connect();
-    await createUsersTable();
-    await createUserProjectsTable();
-    await createUserExperienceTable();
-    await createProjectsTable();
-    await createUserApplicationsTable();
-
     const query = `INSERT INTO users (name, email, rollnumber, batch, branch) VALUES ($1, $2, $3, $4, $5)`;
     const values = [name, email, rollnumber, batch, branch];
     await client.query(query, values);

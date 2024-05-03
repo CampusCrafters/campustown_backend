@@ -110,25 +110,21 @@ export async function createProjectsTable(): Promise<void> {
       CREATE TABLE IF NOT EXISTS projects (
         project_id SERIAL PRIMARY KEY,
         host_id INTEGER REFERENCES users(user_id),
-        members TEXT[] DEFAULT '[]',
+        members TEXT[] DEFAULT '{}',
         project_title VARCHAR(255) NOT NULL,
         domain VARCHAR(255),
         description TEXT,
-        required_roles JSONB, 
+        required_roles JSONB DEFAULT '{}'::jsonb, 
         start_date DATE NOT NULL,
         end_date DATE DEFAULT NULL,
-        applicants JSONB DEFAULT '[]',
-        shortlisted JSONB DEFAULT '[]',
-        rejected JSONB DEFAULT '[]'
+        applicants JSONB DEFAULT '{}'::jsonb,
+        shortlisted JSONB DEFAULT '{}'::jsonb,
+        rejected JSONB DEFAULT '{}'::jsonb
       )
     `;
     await pool.query(query);
     console.log('Table "Projects" successfully created or already exists');
   } catch (error) {
-    console.error("Error creating Projects table:", error);
-    throw error;
+    console.error(`Error creating Projects table: ${error}`);
   }
 }
-
-
-
