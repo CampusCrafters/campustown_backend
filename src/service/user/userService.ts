@@ -1,4 +1,4 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject } from "../../DB/dbFunctions";
+import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience } from "../../DB/dbFunctions";
 
 export const viewProfileService = async (req: any, res: any) => {
   try {       
@@ -64,6 +64,55 @@ export const deleteProfileProjectService = async (req: any, res: any) => {
     }
     await deleteProfileProject(user_project_id);
     res.status(200).json("Profile project deleted successfully");
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
+
+export const viewExperienceService = async (req: any, res: any) => {
+  try {
+    const profileExperience = await getProfileExperience(req.query.user_id);
+    res.status(200).json(profileExperience);
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
+
+export const addExperienceService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const experienceInfo = req.body;
+    await addProfileExperience(user_id, experienceInfo);
+    res.status(200).json("Experience added successfully");
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
+
+export const editExperienceService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const user_experience_id = req.query.user_experience_id;
+    if(await checkProfileExperienceOwner(user_id, user_experience_id) === false) {
+      res.status(401).json("You are not authorized to edit this experience");
+    }
+    const experienceInfo = req.body;
+    await editProfileExperience(user_experience_id, experienceInfo);
+    res.status(200).json("Profile experience updated successfully");
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
+
+export const deleteExperienceService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const user_experience_id = req.query.user_experience_id;
+    if(await checkProfileExperienceOwner(user_id, user_experience_id) === false) {
+      res.status(401).json("You are not authorized to delete this experience");
+    }
+    await deleteProfileExperience(user_experience_id);
+    res.status(200).json("Profile experience deleted successfully");
   } catch (error: any) {
     res.status(401).json(error.message);
   }

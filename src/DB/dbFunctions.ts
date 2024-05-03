@@ -114,6 +114,78 @@ export const deleteProfileProject = async (user_project_id: number) => {
   }
 }
 
+export const getProfileExperience = async (userId: number) => {
+  try {
+    const client = await pool.connect();
+    const query = `SELECT * FROM user_experience WHERE user_id = $1`;
+    const values = [userId];
+    const result = await client.query(query, values);
+    const profileExperience = result.rows;
+    client.release();
+    return profileExperience || `No experience found for user with id ${userId}`;
+  } catch (error) {
+    console.error("Error getting profile experience from database:", error);
+    throw new Error('Error getting profile experience from database');
+  }
+}
+
+export const addProfileExperience = async (userId: number, experienceInfo: object) => {
+  try {
+    const client = await pool.connect();
+    const query = `
+      INSERT INTO user_experience (user_id, role, role_type, organization, organization_type, start_date, end_date, tech_stack, contributions)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `;
+    const values = [userId, ...Object.values(experienceInfo)];
+    await client.query(query, values);
+    client.release();
+  } catch (error) {
+    console.error("Error adding experience to database:", error);
+    throw new Error('Error adding experience to database');
+  }
+}
+
+export const editProfileExperience = async (user_experience_id: number, experienceInfo: object) => {
+  try {
+    const client = await pool.connect();
+    const fields = Object.keys(experienceInfo);
+    const query = `UPDATE user_experience SET ${fields.map((field, index) => `${field} = $${index + 1}`).join(', ')} WHERE exp_id = $${fields.length + 1}`;
+    const values = [...Object.values(experienceInfo), user_experience_id];
+    await client.query(query, values);
+    client.release();
+  } catch (error) {
+    console.error("Error updating experience on database:", error);
+    throw new Error('Error updating experience on database');
+  } 
+}
+
+export const deleteProfileExperience = async (user_experience_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = "DELETE FROM user_experience WHERE exp_id = $1";
+    const values = [user_experience_id];
+    await client.query(query, values);
+    client.release();
+  } catch (error) {
+    console.error("Error deleting experience from database:", error);
+    throw new Error('Error deleting experience from database');
+  }
+}
+
+export const checkProfileExperienceOwner = async (userId: number, user_experience_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = "SELECT EXISTS (SELECT 1 FROM user_experience WHERE user_id = $1 AND exp_id = $2)";
+    const values = [userId, user_experience_id];
+    const result = await client.query(query, values);
+    client.release();
+    return result.rows[0].exists;
+  } catch (error) {
+    console.error("Error checking experience owner in database:", error);
+    throw new Error('Error checking experience owner in database');
+  }
+}
+
 export const checkProfileProjectOwner = async (userId: number, user_project_id: number) => {
   try {
     const client = await pool.connect();
