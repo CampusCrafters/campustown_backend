@@ -110,12 +110,13 @@ export async function createProjectsTable(): Promise<void> {
       CREATE TABLE IF NOT EXISTS projects (
         project_id SERIAL PRIMARY KEY,
         host_id INTEGER REFERENCES users(user_id),
-        members TEXT[],
+        members TEXT[] DEFAULT '[]',
         project_title VARCHAR(255) NOT NULL,
         domain VARCHAR(255),
+        description TEXT,
         required_roles JSONB, 
-        start_date DATE,
-        end_date DATE,
+        start_date DATE NOT NULL,
+        end_date DATE DEFAULT NULL,
         applicants JSONB DEFAULT '[]',
         shortlisted JSONB DEFAULT '[]',
         rejected JSONB DEFAULT '[]'
