@@ -11,7 +11,6 @@ const oAuth2Client = new OAuth2Client(
   );
 
 export const signinService = async (req: any, res: any) => {
-  // Headers setup
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Referrer-Policy", "no-referrer-when-downgrade");
 

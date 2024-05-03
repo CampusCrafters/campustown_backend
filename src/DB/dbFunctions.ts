@@ -101,6 +101,19 @@ export const editProfileProject = async (user_project_id: number, projectInfo: o
   } 
 }
 
+export const deleteProfileProject = async (user_project_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = "DELETE FROM user_projects WHERE user_project_id = $1";
+    const values = [user_project_id];
+    await client.query(query, values);
+    client.release();
+  } catch (error) {
+    console.error("Error deleting project from database:", error);
+    throw new Error('Error deleting project from database');
+  }
+}
+
 export const checkProfileProjectOwner = async (userId: number, user_project_id: number) => {
   try {
     const client = await pool.connect();
