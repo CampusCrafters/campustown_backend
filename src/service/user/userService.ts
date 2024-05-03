@@ -1,4 +1,4 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner } from "../../DB/dbFunctions";
+import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject } from "../../DB/dbFunctions";
 
 export const viewProfileService = async (req: any, res: any) => {
   try {       
@@ -55,6 +55,16 @@ export const editProfileProjectService = async (req: any, res: any) => {
   }
 }
 
-export const deleteProfileProjectService = async (req: any, res: any) => {  
-
+export const deleteProfileProjectService = async (req: any, res: any) => { 
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const user_project_id = req.query.user_project_id;
+    if(await checkProfileProjectOwner(user_id, user_project_id) === false) {
+      res.status(401).json("You are not authorized to delete this project");
+    }
+    await deleteProfileProject(user_project_id);
+    res.status(200).json("Profile project deleted successfully");
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
 }
