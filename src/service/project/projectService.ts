@@ -44,6 +44,7 @@ export const editProjectService = async (req: any, res: any) => {
     const project_id = req.query.project_id;
     if ((await checkProjectOwner(user_id, project_id)) === false) {
       res.status(401).json("You are not authorized to edit this project");
+      return;
     }
     const projectInfo = req.body;
     await updateProject(project_id, projectInfo);

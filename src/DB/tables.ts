@@ -78,7 +78,9 @@ export async function createUserExperienceTable(): Promise<void> {
       )
     `;
     await pool.query(query);
-    console.log('Table "user_experience" successfully created or already exists');
+    console.log(
+      'Table "user_experience" successfully created or already exists'
+    );
   } catch (error) {
     console.error("Error creating user_experience table:", error);
     throw error;
@@ -97,7 +99,9 @@ export async function createUserApplicationsTable(): Promise<void> {
       )
     `;
     await pool.query(query);
-    console.log('Table "UserApplications" successfully created or already exists');
+    console.log(
+      'Table "UserApplications" successfully created or already exists'
+    );
   } catch (error) {
     console.error("Error creating UserApplications table:", error);
     throw error;
