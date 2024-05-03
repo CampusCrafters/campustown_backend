@@ -25,7 +25,7 @@ export const addProject = async (user_id: number, projectInfo: object) => {
 
     const query = {
       text:
-        "INSERT INTO projects (host, members, project_title, description, domain, required_roles, start_date, end_date, applicants, shortlisted, rejected)" +
+        "INSERT INTO projects (host_id, members, project_title, description, domain, required_roles, start_date, end_date, applicants, shortlisted, rejected)" +
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
       values: [user_id, ...Object.values(projectInfo)],
     };
@@ -43,7 +43,7 @@ export const getMyProjects = async (user_id: number) => {
   try {
     client = await pool.connect();
     const query = {
-      text: "SELECT * FROM projects WHERE host = $1",
+      text: "SELECT * FROM projects WHERE host_id = $1",
       values: [user_id],
     };
     const result = await client.query(query);
@@ -77,13 +77,16 @@ export const updateProject = async (
   }
 };
 
-export const checkProjectOwner = async (host: number, project_id: number) => {
+export const checkProjectOwner = async (
+  host_id: number,
+  project_id: number
+) => {
   let client;
   try {
     client = await pool.connect();
     const query = {
-      text: "SELECT EXISTS (SELECT 1 FROM projects WHERE host = $1 AND project_id = $2)",
-      values: [host, project_id],
+      text: "SELECT EXISTS (SELECT 1 FROM projects WHERE host_id = $1 AND project_id = $2)",
+      values: [host_id, project_id],
     };
     const result = await client.query(query);
     client.release();
