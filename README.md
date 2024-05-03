@@ -27,6 +27,7 @@ npm start
 ## Connect to postgres DB using pgAdmin (any GUI tool)
 
 Install pgAdmin for desktop
- Connect db to pgadmin (GUI):
+
+Register a new server with DB credentials.
 
 
