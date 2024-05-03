@@ -1,6 +1,6 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import { addUser, checkEmailExists } from '../../DB/dbFunctions';
+import { addUser, checkEmailExists } from '../../DB/userDbFunctions';
 
 export const getUserInfoFromGoogle = async (access_token: string) => {
     const response = await axios.post(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
