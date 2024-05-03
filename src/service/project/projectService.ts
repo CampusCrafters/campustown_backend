@@ -1,12 +1,11 @@
 import {
   getAllProjects,
-  getUserProfile,
   addProject,
   getMyProjects,
   updateProject,
   checkProjectOwner,
-} from "../../DB/dbFunctions";
-
+} from "../../DB/projectDbFunctions";
+import { getUserProfile } from "../../DB/userDbFunctions";
 export const postProjectService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
