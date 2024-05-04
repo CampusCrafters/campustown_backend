@@ -82,3 +82,61 @@ export const checkProjectOwner = async (host_id: number, project_id: number) => 
     throw new Error("Error checking project owner in database");
   }
 };
+
+export const shortlistApplicant = async (project_id: number, applicant_id: number) => {
+  try {
+    const client = await pool.connect();
+    const updateProjectQuery = {
+      text: `
+        UPDATE projects 
+        SET shortlisted = array_append(shortlisted, $1), applicants = array_remove(applicants, $1)
+        WHERE project_id = $2
+      `,
+      values: [applicant_id, project_id],
+    };
+    await client.query(updateProjectQuery);
+
+    const updateUserApplicationsQuery = {
+      text: `   
+        UPDATE user_applications 
+        SET status = 'shortlisted'
+        WHERE project_id = $1 AND user_id = $2
+      `,
+      values: [project_id, applicant_id],
+    };
+    await client.query(updateUserApplicationsQuery);
+    client.release();
+  } catch (error) {
+    console.error("Error shortlisting applicant in database:", error);
+    throw new Error("Error shortlisting applicant in database");
+  }
+};
+
+export const rejectApplicant = async (project_id: number, applicant_id: number) => {
+  try {
+    const client = await pool.connect();
+    const updateProjectQuery = {
+      text: `
+        UPDATE projects 
+        SET rejected = array_append(rejected, $1), applicants = array_remove(applicants, $1)
+        WHERE project_id = $2
+      `,
+      values: [applicant_id, project_id],
+    };
+    await client.query(updateProjectQuery);
+
+    const updateUserApplicationsQuery = {
+      text: `   
+        UPDATE user_applications 
+        SET status = 'Not Accepted'
+        WHERE project_id = $1 AND user_id = $2
+      `,
+      values: [project_id, applicant_id],
+    };
+    await client.query(updateUserApplicationsQuery);
+    client.release();
+  } catch (error) {
+    console.error("Error rejecting applicant in database:", error);
+    throw new Error("Error rejecting applicant in database");
+  }
+};

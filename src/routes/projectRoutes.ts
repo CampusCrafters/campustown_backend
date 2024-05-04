@@ -2,7 +2,7 @@ import "dotenv/config";
 import { Router } from "express";
 import bodyParser from "body-parser";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { getAllProjectsService, postProjectService, getMyProjectsService, editProjectService } from "../service/project/projectService";
+import { getAllProjectsService, postProjectService, getMyProjectsService, editProjectService, shortlistApplicantService, rejectApplicantService } from "../service/project/projectService";
 
 const router = Router();
 router.use(bodyParser.json());
@@ -18,7 +18,7 @@ router.put("/editProject", authMiddleware, editProjectService);
 
 // router.get('/projectApplicants', getApplicantsService);
 // router.post('/acceptApplicant', acceptApplicantService);
-// router.post('/shortlistApplicant', shortlistApplicantService);
-// router.post('/rejectApplicant', rejectApplicantService);
+router.post('/shortlistApplicant', shortlistApplicantService);
+router.post('/rejectApplicant', rejectApplicantService);
 
 export default router;
