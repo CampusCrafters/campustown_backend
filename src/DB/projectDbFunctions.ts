@@ -1,10 +1,8 @@
 import { pool } from "./tables";
-import { createProjectsTable } from "./tables";
 
 export const getAllProjects = async () => {
-  let client;
   try {
-    client = await pool.connect();
+    const client = await pool.connect();
     const query = {
       text: "SELECT * FROM projects",
     };
@@ -18,10 +16,8 @@ export const getAllProjects = async () => {
 };
 
 export const addProject = async (user_id: number, projectInfo: object) => {
-  await createProjectsTable();
-  let client;
   try {
-    client = await pool.connect();
+    const client = await pool.connect();
 
     const query = {
       text:
@@ -39,9 +35,8 @@ export const addProject = async (user_id: number, projectInfo: object) => {
 };
 
 export const getMyProjects = async (user_id: number) => {
-  let client;
   try {
-    client = await pool.connect();
+    const client = await pool.connect();
     const query = {
       text: "SELECT * FROM projects WHERE host_id = $1",
       values: [user_id],
@@ -55,20 +50,15 @@ export const getMyProjects = async (user_id: number) => {
   }
 };
 
-export const updateProject = async (
-  project_id: number,
-  projectinfo: object
-) => {
-  let client;
+export const updateProject = async (project_id: number, projectinfo: object) => {
   try {
-    client = await pool.connect();
+    const client = await pool.connect();
     const projectfields = Object.keys(projectinfo);
     const query = `UPDATE projects SET ${projectfields
       .map((field, index) => `${field} = $${index + 1}`)
       .join(", ")} WHERE project_id = $${projectfields.length + 1}`;
 
     const values = [...Object.values(projectinfo), project_id];
-
     await client.query(query, values);
     client.release();
   } catch (err: any) {
@@ -77,13 +67,9 @@ export const updateProject = async (
   }
 };
 
-export const checkProjectOwner = async (
-  host_id: number,
-  project_id: number
-) => {
-  let client;
+export const checkProjectOwner = async (host_id: number, project_id: number) => {
   try {
-    client = await pool.connect();
+    const client = await pool.connect();
     const query = {
       text: "SELECT EXISTS (SELECT 1 FROM projects WHERE host_id = $1 AND project_id = $2)",
       values: [host_id, project_id],

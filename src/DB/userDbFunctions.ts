@@ -1,4 +1,4 @@
-import { pool, createUsersTable, createUserProjectsTable, createUserExperienceTable, createUserApplicationsTable, createProjectsTable } from "./tables";
+import { pool } from "./tables";
 
 export const addUser = async (name: string, email: string, rollnumber: string, batch: number, branch: string): Promise<void> => {
   try {
