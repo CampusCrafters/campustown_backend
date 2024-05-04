@@ -1,5 +1,5 @@
 import { getUserProfile } from "../../DB/userDbFunctions";
-import { getAllProjects, addProject, getMyProjects, updateProject, checkProjectOwner, shortlistApplicant, rejectApplicant, deleteProject } from "../../DB/projectDbFunctions";
+import { getAllProjects, addProject, getMyProjects, updateProject, checkProjectOwner, shortlistApplicant, rejectApplicant, deleteProject } from "../../DB/projectDbFunctions"
 
 export const postProjectService = async (req: any, res: any) => {
   try {
