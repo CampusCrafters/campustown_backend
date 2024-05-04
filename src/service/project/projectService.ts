@@ -1,5 +1,5 @@
-import { getAllProjects, addProject, getMyProjects, updateProject, checkProjectOwner } from "../../DB/projectDbFunctions";
 import { getUserProfile } from "../../DB/userDbFunctions";
+import { getAllProjects, addProject, getMyProjects, updateProject, checkProjectOwner, shortlistApplicant, rejectApplicant } from "../../DB/projectDbFunctions";
 
 export const postProjectService = async (req: any, res: any) => {
   try {
@@ -36,7 +36,7 @@ export const editProjectService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const project_id = req.query.project_id;
-    if ((await checkProjectOwner(user_id, project_id)) === false) {
+    if (await checkProjectOwner(user_id, project_id) === false) {
       res.status(401).json("You are not authorized to edit this project");
       return;
     }
@@ -47,3 +47,35 @@ export const editProjectService = async (req: any, res: any) => {
     res.status(401).json(err.message);
   }
 };
+
+export const shortlistApplicantService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const project_id = req.query.project_id;
+    if (await checkProjectOwner(user_id, project_id) === false) {
+      res.status(401).json("You are not authorized to shortlist applicants for this project");
+      return;
+    }
+    const applicant_id = req.query.applicant_id; // user_id of the applicant from the projects table.
+    await shortlistApplicant(project_id, applicant_id);
+    res.status(200).json("Applicant shortlisted successfully");
+  } catch (err: any) {
+    res.status(401).json(err.message);
+  }
+};
+
+export const rejectApplicantService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const project_id = req.query.project_id;
+    if (await checkProjectOwner(user_id, project_id) === false) {
+      res.status(401).json("You are not authorized to reject applicants for this project");
+      return;
+    }
+    const applicant_id = req.query.applicant_id;
+    await rejectApplicant(project_id, applicant_id);
+    res.status(200).json("Applicant rejected successfully");
+  } catch (err: any) {
+    res.status(401).json(err.message);
+  }
+}
