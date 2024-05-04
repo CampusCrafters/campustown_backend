@@ -82,6 +82,21 @@ export const deleteProject = async (project_id: number) => {
   }
 }
 
+export const updateProjectStatus = async (project_id: number, status: string) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: "UPDATE projects SET status = $1 WHERE project_id = $2",
+      values: [status, project_id],
+    };
+    await client.query(query);
+    client.release();
+  } catch (err: any) {
+    console.error("Error updating project status: ", err.message);
+    throw new Error("Error updating project status");
+  }
+}
+
 export const checkProjectOwner = async (host_id: number, project_id: number) => {
   try {
     const client = await pool.connect();
@@ -98,60 +113,40 @@ export const checkProjectOwner = async (host_id: number, project_id: number) => 
   }
 };
 
-export const shortlistApplicant = async (project_id: number, applicant_id: number) => {
+export const shortlistApplicant = async (project_id: number, role_name: string, applicant_id: number) => {
   try {
     const client = await pool.connect();
-    const updateProjectQuery = {
+    const updateProjectApplicationsTable = {
       text: `
-        UPDATE projects 
-        SET shortlisted = array_append(shortlisted, $1), applicants = array_remove(applicants, $1)
-        WHERE project_id = $2
+        UPDATE project_applications 
+        SET status = 'Shortlisted'
+        WHERE project_id = $1 AND user_id = $2 AND role = $3
       `,
-      values: [applicant_id, project_id],
+      values: [project_id, applicant_id, role_name],
     };
-    await client.query(updateProjectQuery);
-
-    const updateUserApplicationsQuery = {
-      text: `   
-        UPDATE user_applications 
-        SET status = 'shortlisted'
-        WHERE project_id = $1 AND user_id = $2
-      `,
-      values: [project_id, applicant_id],
-    };
-    await client.query(updateUserApplicationsQuery);
+    await client.query(updateProjectApplicationsTable);
     client.release();
-  } catch (error) {
-    console.error("Error shortlisting applicant in database:", error);
+  } catch (error: any) {
+    console.error("Error shortlisting applicant in database:", error.message);
     throw new Error("Error shortlisting applicant in database");
   }
-};
+}
 
-export const rejectApplicant = async (project_id: number, applicant_id: number) => {
+export const rejectApplicant = async (project_id: number, role_name: string, applicant_id: number) => {
   try {
     const client = await pool.connect();
-    const updateProjectQuery = {
+    const updateProjectApplicationsTable = {
       text: `
-        UPDATE projects 
-        SET rejected = array_append(rejected, $1), applicants = array_remove(applicants, $1)
-        WHERE project_id = $2
+        UPDATE project_applications 
+        SET status = 'Rejected'
+        WHERE project_id = $1 AND user_id = $2 AND role = $3
       `,
-      values: [applicant_id, project_id],
+      values: [project_id, applicant_id, role_name],
     };
-    await client.query(updateProjectQuery);
-
-    const updateUserApplicationsQuery = {
-      text: `   
-        UPDATE user_applications 
-        SET status = 'Not Accepted'
-        WHERE project_id = $1 AND user_id = $2
-      `,
-      values: [project_id, applicant_id],
-    };
-    await client.query(updateUserApplicationsQuery);
+    await client.query(updateProjectApplicationsTable);
     client.release();
-  } catch (error) {
-    console.error("Error rejecting applicant in database:", error);
+  } catch (error: any) {
+    console.error("Error rejecting applicant in database:", error.message);
     throw new Error("Error rejecting applicant in database");
   }
-};
+}
