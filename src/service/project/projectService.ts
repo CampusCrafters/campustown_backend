@@ -1,5 +1,5 @@
 import { getUserProfile } from "../../DB/userDbFunctions";
-import { getAllProjects, addProject, getMyProjects, updateProject, checkProjectOwner, shortlistApplicant, rejectApplicant } from "../../DB/projectDbFunctions";
+import { getAllProjects, addProject, getMyProjects, updateProject, checkProjectOwner, shortlistApplicant, rejectApplicant, deleteProject } from "../../DB/projectDbFunctions";
 
 export const postProjectService = async (req: any, res: any) => {
   try {
@@ -47,6 +47,21 @@ export const editProjectService = async (req: any, res: any) => {
     res.status(401).json(err.message);
   }
 };
+
+export const deleteProjectService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const project_id = req.query.project_id;
+    if (await checkProjectOwner(user_id, project_id) === false) {
+      res.status(401).json("You are not authorized to delete this project");
+      return;
+    }
+    await deleteProject(project_id);
+    res.status(200).json("Project deleted successfully");
+  } catch (err: any) {
+    res.status(401).json(err.message);
+  }
+}
 
 export const shortlistApplicantService = async (req: any, res: any) => {
   try {
