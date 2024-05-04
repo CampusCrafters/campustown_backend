@@ -180,6 +180,26 @@ export const checkProfileExperienceOwner = async (userId: number, user_experienc
   }
 }
 
+export const getMyApplications = async (userId: number) => {
+  try {
+    const client = await pool.connect();
+    const query = `
+      SELECT pa.*, p.project_title
+      FROM project_applications pa
+      JOIN projects p ON pa.project_id = p.project_id
+      WHERE pa.user_id = $1
+    `;
+    const values = [userId];
+    const result = await client.query(query, values);
+    const myApplications = result.rows;
+    client.release();
+    return myApplications || `No applications found for user with id ${userId}`;
+  } catch (error: any) {
+    console.error("Error getting applications from database:", error.message);
+    throw new Error('Error getting applications from database');
+  }
+}
+
 export const checkProfileProjectOwner = async (userId: number, user_project_id: number) => {
   try {
     const client = await pool.connect();
@@ -207,3 +227,4 @@ export const checkEmailExists = async (email: string) => {
     throw new Error('Error checking email existence in database');
   }
 };
+

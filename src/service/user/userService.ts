@@ -1,4 +1,4 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience } from "../../DB/userDbFunctions"
+import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications } from "../../DB/userDbFunctions"
 
 export const viewProfileService = async (req: any, res: any) => {
   try {
@@ -117,3 +117,13 @@ export const deleteExperienceService = async (req: any, res: any) => {
     res.status(401).json(error.message);
   }
 };
+
+export const getMyApplicationsService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const myApplications = await getMyApplications(user_id);
+    res.status(200).json(myApplications);
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
