@@ -87,27 +87,6 @@ export async function createUserExperienceTable(): Promise<void> {
   }
 }
 
-// export async function createUserApplicationsTable(): Promise<void> {
-//   try {
-//     const query = `
-//       CREATE TABLE IF NOT EXISTS user_applications (
-//         application_id SERIAL PRIMARY KEY,
-//         user_id INTEGER REFERENCES users(user_id),
-//         project_id INTEGER REFERENCES projects(project_id),
-//         project_title VARCHAR(255),
-//         status VARCHAR(50) DEFAULT 'Pending'
-//       )
-//     `;
-//     await pool.query(query);
-//     console.log(
-//       'Table "UserApplications" successfully created or already exists'
-//     );
-//   } catch (error) {
-//     console.error("Error creating UserApplications table:", error);
-//     throw error;
-//   }
-// }
-
 export async function createProjectsTable(): Promise<void> {
   try {
     const query = `
@@ -134,10 +113,10 @@ export const createProjectApplicationsTable = async (): Promise<void> => {
   try {
     const query = `
       CREATE TABLE IF NOT EXISTS project_applications (
-        application_id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(user_id),
+        application_id SERIAL PRIMARY KEY ,
+        user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
         applicant_name VARCHAR(255), 
-        project_id INTEGER REFERENCES projects(project_id),
+        project_id INTEGER REFERENCES projects(project_id) ON DELETE CASCADE,
         role_id INTEGER, 
         role VARCHAR(255), 
         status VARCHAR(50) DEFAULT 'Pending',
