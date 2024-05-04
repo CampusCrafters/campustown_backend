@@ -1,11 +1,6 @@
-import {
-  getAllProjects,
-  addProject,
-  getMyProjects,
-  updateProject,
-  checkProjectOwner,
-} from "../../DB/projectDbFunctions";
+import { getAllProjects, addProject, getMyProjects, updateProject, checkProjectOwner } from "../../DB/projectDbFunctions";
 import { getUserProfile } from "../../DB/userDbFunctions";
+
 export const postProjectService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
@@ -21,7 +16,6 @@ export const postProjectService = async (req: any, res: any) => {
 export const getAllProjectsService = async (req: any, res: any) => {
   try {
     const allProjects = await getAllProjects();
-    //console.log(allProjects);
     res.status(200).json(allProjects);
   } catch (err: any) {
     res.status(401).json(err.message);
