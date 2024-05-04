@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model projects {
+  project_id        Int                 @id @default(autoincrement())
+  host_id           Int?
+  members           String[]            @default([])
+  project_title     String              @db.VarChar(255)
+  domain            String?             @db.VarChar(255)
+  description       String?
+  required_roles    Json?               @default("{}")
+  start_date        DateTime            @db.Date
+  end_date          DateTime?           @db.Date
+  users             users?              @relation(fields: [host_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  user_applications user_applications[]
+}
+
+model user_applications {
+  application_id Int       @id @default(autoincrement())
+  user_id        Int?
+  project_id     Int?
+  project_title  String?   @db.VarChar(255)
+  status         String?   @default("Pending") @db.VarChar(50)
+  projects       projects? @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction)
+  users          users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_experience {
+  exp_id            Int       @id @default(autoincrement())
+  user_id           Int?
+  role              String    @db.VarChar(255)
+  role_type         String    @db.VarChar(255)
+  organization      String    @db.VarChar(255)
+  organization_type String    @db.VarChar(255)
+  start_date        DateTime  @db.Date
+  end_date          DateTime? @db.Date
+  tech_stack        String[]
+  contributions     String[]
+  users             users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model user_projects {
+  user_project_id Int      @id @default(autoincrement())
+  user_id         Int?
+  project_title   String?  @db.VarChar(255)
+  in_progress     Boolean?
+  domain          String?  @db.VarChar(255)
+  description     String?
+  project_link    String?  @db.VarChar(255)
+  github_link     String?  @db.VarChar(255)
+  features        String[]
+  tech_stack      String[]
+  group           Boolean?
+  team_members    String[]
+  campus_project  Boolean?
+  collaborators   String[]
+  users           users?   @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  user_id           Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(255)
+  email             String              @unique @db.VarChar(255)
+  rollnumber        String              @unique @db.VarChar(20)
+  batch             Int
+  branch            String              @db.VarChar(255)
+  dob               DateTime?           @db.Date
+  location          String?             @db.VarChar(255)
+  pers_email        String?             @db.VarChar(255)    
+  mobile            String?             @unique @db.Char(10)
+  about             String?
+  github            String?             @unique @db.VarChar(255)
+  linkedin          String?             @unique @db.VarChar(255)
+  skills            String[]
+  interests         String[]
+  learning          String[]
+  projects          projects[]
+  user_applications user_applications[]
+  user_experience   user_experience[]
+  user_projects     user_projects[]
+}

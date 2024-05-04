@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 
 export const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
+  connectionString: process.env.DATABASE_URL,
 });
 
 export async function createUsersTable(): Promise<void> {
@@ -72,9 +72,9 @@ export async function createUserExperienceTable(): Promise<void> {
         organization VARCHAR(255) NOT NULL,
         organization_type VARCHAR(255) NOT NULL,
         start_date DATE NOT NULL,
-        end_date DATE,
-        tech_stack TEXT[],
-        contributions TEXT[]
+        end_date DATE NOT NULL, 
+        tech_stack TEXT[] NOT NULL,
+        contributions TEXT[] NOT NULL,
       )
     `;
     await pool.query(query);
@@ -92,14 +92,16 @@ export async function createProjectsTable(): Promise<void> {
     const query = `
       CREATE TABLE IF NOT EXISTS projects (
         project_id SERIAL PRIMARY KEY,
-        host_id INTEGER REFERENCES users(user_id),
+        host_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
         members JSONB DEFAULT '[]'::jsonb, 
         project_title VARCHAR(255) NOT NULL,
-        domain VARCHAR(255),
+        domain VARCHAR(255) NOT NULL,
         description TEXT,
-        required_roles JSONB DEFAULT '[]'::jsonb, 
+        link VARCHAR(255) DEFAULT NULL,
+        required_roles TEXT[] NOT NULL DEFAULT '{}', 
         start_date DATE NOT NULL,
         end_date DATE DEFAULT NULL,
+        status VARCHAR(50) DEFAULT 'Open' NOT NULL,
       )
     `;
     await pool.query(query);
@@ -115,11 +117,10 @@ export const createProjectApplicationsTable = async (): Promise<void> => {
       CREATE TABLE IF NOT EXISTS project_applications (
         application_id SERIAL PRIMARY KEY ,
         user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-        applicant_name VARCHAR(255), 
+        applicant_name VARCHAR(255) NOT NULL, 
         project_id INTEGER REFERENCES projects(project_id) ON DELETE CASCADE,
-        role_id INTEGER, 
-        role VARCHAR(255), 
-        status VARCHAR(50) DEFAULT 'Pending',
+        role VARCHAR(255) NOT NULL, 
+        status VARCHAR(50) DEFAULT 'Pending' NOT NULL,
       )
     `;
     await pool.query(query);
