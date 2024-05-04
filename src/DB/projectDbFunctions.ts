@@ -67,6 +67,21 @@ export const updateProject = async (project_id: number, projectinfo: object) => 
   }
 };
 
+export const deleteProject = async (project_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: "DELETE FROM projects WHERE project_id = $1",
+      values: [project_id],
+    };
+    await client.query(query);
+    client.release();
+  } catch (err: any) {
+    console.error("Error deleting project: ", err.message);
+    throw new Error("Error deleting project");
+  }
+}
+
 export const checkProjectOwner = async (host_id: number, project_id: number) => {
   try {
     const client = await pool.connect();

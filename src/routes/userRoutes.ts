@@ -14,6 +14,13 @@ router.post("/verifyToken", verifyTokenService);
 
 router.get("/viewProfile", authMiddleware, viewProfileService);
 router.put("/editProfile", authMiddleware, editProfileService);
+//router.post("/addProfilePicture", authMiddleware, addProfilePictureService);
+//router.delete("/deleteProfilePicture", authMiddleware, deleteProfilePictureService);
+//router.get("/viewProfilePicture", viewProfilePictureService);
+
+//router.post("/addResume", authMiddleware, addResumeService);
+//router.delete("/deleteResume", authMiddleware, deleteResumeService);
+//router.get("/viewResume", viewResumeService);
 
 router.get("/viewProfileProject", viewProfileProjectService);
 router.post("/addProfileProject", authMiddleware, addProfileProjectService);
