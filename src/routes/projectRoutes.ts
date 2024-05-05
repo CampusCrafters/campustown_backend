@@ -16,7 +16,7 @@ router.delete("/deleteProject", authMiddleware, deleteProjectService);
 router.put("/editProjectStatus", authMiddleware, editProjectStatusService);
 
 // router.post('/applyProject', addApplicationService);
-// router.put('/editApplication', editApplicationService); // to change the role
+// router.put('/editApplication', editApplicationService); // to change the role for which the user applied for.
 // router.delete('/deleteApplication', deleteApplicationService);
 
 // router.get('/projectApplicants', getApplicantsService);
