@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import multer from "multer";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { signinService, getTokensAndStoreDataService, verifyTokenService } from "../service/auth/authService";
-import { viewProfileService, editProfileService, addProfileProjectService, viewProfileProjectService, editProfileProjectService, deleteProfileProjectService, viewExperienceService, addExperienceService, editExperienceService, deleteExperienceService, getMyApplicationsService, addProfilePictureService, viewProfilePictureService } from "../service/user/userService";
+import { viewProfileService, editProfileService, addProfileProjectService, viewProfileProjectService, editProfileProjectService, deleteProfileProjectService, viewExperienceService, addExperienceService, editExperienceService, deleteExperienceService, getMyApplicationsService, profilePictureService, viewProfilePictureService } from "../service/user/userService";
 
 const router = Router();
 router.use(bodyParser.json());
@@ -17,9 +17,10 @@ router.post("/verifyToken", verifyTokenService);
 
 router.get("/viewProfile", viewProfileService);
 router.put("/editProfile", authMiddleware, editProfileService);
-router.post("/addProfilePicture", authMiddleware, upload.single('image'), addProfilePictureService);
+router.post("/addProfilePicture", authMiddleware, upload.single('image'), profilePictureService);
+router.put("/editProfilePicture", authMiddleware, upload.single('image'), profilePictureService);
+router.delete("/deleteProfilePicture", authMiddleware, profilePictureService);
 router.get("/viewProfilePicture", viewProfilePictureService);
-//router.delete("/deleteProfilePicture", authMiddleware, deleteProfilePictureService);
 
 //router.post("/addResume", authMiddleware, addResumeService);
 //router.delete("/deleteResume", authMiddleware, deleteResumeService);
