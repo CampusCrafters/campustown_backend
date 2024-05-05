@@ -1,5 +1,5 @@
-import fs from 'fs';
 import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, addProfilePicture, getProfilePicture } from "../../DB/userDbFunctions"
+import { uploadImgToS3 } from "../user/userHelper";
 
 export const viewProfileService = async (req: any, res: any) => {
   try {
@@ -11,18 +11,17 @@ export const viewProfileService = async (req: any, res: any) => {
 };
 
 export const addProfilePictureService = async (req: any, res: any) => {
-  console.log("reached addProfilePictureService");
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const imageFile = req.file;
-    if (!imageFile) {
+    const { fileName, buffer, mimetype } = req.file;
+    if (!req.file) {
       return res.status(400).send('No file uploaded.');
     }
-    const fileContent = await fs.promises.readFile(imageFile.path);
-    await addProfilePicture(user_id, imageFile.originalname, imageFile.mimetype, fileContent);
-    res.status(200).json("Profile picture added successfully");
+    const imageUrl = await uploadImgToS3(fileName, buffer, mimetype);
+    await addProfilePicture(user_id, imageUrl);
+    res.status(200).json({ imageUrl: imageUrl });
   } catch (error: any) {
-    res.status(401).json(error.message);
+      res.status(400).json(error.message);
   }
 }
 

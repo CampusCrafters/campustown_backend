@@ -28,11 +28,11 @@ export const getUserProfile = async (email: string) => {
   }
 };
 
-export const addProfilePicture = async (user_id: number, filename: string, mimetype: string, fileContent: Buffer): Promise<void> => {
+export const addProfilePicture = async (user_id: number, imageUrl: string): Promise<void> => {
   try {
     const client = await pool.connect();
     const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
-    const values = [fileContent, user_id];
+    const values = [imageUrl, user_id];
     await client.query(query, values);
     client.release();
   } catch (error) {
