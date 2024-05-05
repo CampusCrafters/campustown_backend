@@ -9,6 +9,7 @@ export async function createUsersTable(): Promise<void> {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         user_id SERIAL PRIMARY KEY,
+        profile_picture BYTEA DEFAULT NULL,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
         rollnumber VARCHAR(20) NOT NULL UNIQUE,
@@ -101,7 +102,7 @@ export async function createProjectsTable(): Promise<void> {
         required_roles TEXT[] NOT NULL DEFAULT '{}', 
         start_date DATE NOT NULL,
         end_date DATE DEFAULT NULL,
-        status VARCHAR(50) DEFAULT 'Open' NOT NULL,
+        status VARCHAR(50) DEFAULT 'Open' NOT NULL
       )
     `;
     await pool.query(query);
@@ -120,7 +121,7 @@ export const createProjectApplicationsTable = async (): Promise<void> => {
         applicant_name VARCHAR(255) NOT NULL, 
         project_id INTEGER REFERENCES projects(project_id) ON DELETE CASCADE,
         role VARCHAR(255) NOT NULL, 
-        status VARCHAR(50) DEFAULT 'Pending' NOT NULL,
+        status VARCHAR(50) DEFAULT 'Pending' NOT NULL
       )
     `;
     await pool.query(query);
