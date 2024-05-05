@@ -74,7 +74,7 @@ export async function createUserExperienceTable(): Promise<void> {
         start_date DATE NOT NULL,
         end_date DATE NOT NULL, 
         tech_stack TEXT[] NOT NULL,
-        contributions TEXT[] NOT NULL,
+        contributions TEXT[] NOT NULL
       )
     `;
     await pool.query(query);
