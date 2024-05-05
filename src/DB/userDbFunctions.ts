@@ -31,7 +31,7 @@ export const getUserProfile = async (email: string) => {
 export const addProfilePicture = async (user_id: number, imageUrl: string): Promise<void> => {
   try {
     const client = await pool.connect();
-    const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
+    const query = `INSERT INTO users (profile_picture) VALUES ($1) WHERE user_id = $2`;
     const values = [imageUrl, user_id];
     await client.query(query, values);
     client.release();
@@ -41,16 +41,28 @@ export const addProfilePicture = async (user_id: number, imageUrl: string): Prom
   }
 }
 
+export const updateProfilePicture = async (user_id: number, imageUrl: string): Promise<void> => {
+  try {
+    const client = await pool.connect();
+    const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
+    const values = [imageUrl, user_id];
+    await client.query(query, values);
+    client.release();
+  } catch (error) {
+    console.error("Error updating profile picture on database:", error);
+    throw new Error('Error updating profile picture on database');
+  }
+}
+
 export const getProfilePicture = async (user_id: number) => {
   try {
-    console.log("user_id", user_id);
     const client = await pool.connect();
     const query = "SELECT profile_picture FROM users WHERE user_id = $1";
     const values = [user_id];
     const result = await client.query(query, values);
     const profilePicture = result.rows[0];
     client.release();
-    return profilePicture || `No profile picture found for user with id ${user_id}`;
+    return profilePicture || null;
   } catch (error) {
     console.error("Error getting profile picture from database:", error);
     throw new Error('Error getting profile picture from database');

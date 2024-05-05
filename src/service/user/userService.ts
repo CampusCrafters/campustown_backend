@@ -1,4 +1,4 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, addProfilePicture, getProfilePicture } from "../../DB/userDbFunctions"
+import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, addProfilePicture, updateProfilePicture, getProfilePicture } from "../../DB/userDbFunctions"
 import { uploadImgToS3 } from "../user/userHelper";
 
 export const viewProfileService = async (req: any, res: any) => {
@@ -18,6 +18,11 @@ export const addProfilePictureService = async (req: any, res: any) => {
       return res.status(400).send('No file uploaded.');
     }
     const imageUrl = await uploadImgToS3(fileName, buffer, mimetype);
+    if(await getProfilePicture(user_id)) {
+      await updateProfilePicture(user_id, imageUrl);
+      res.status(200).json({ imageUrl: imageUrl });
+      return;
+    }
     await addProfilePicture(user_id, imageUrl);
     res.status(200).json({ imageUrl: imageUrl });
   } catch (error: any) {
@@ -26,13 +31,11 @@ export const addProfilePictureService = async (req: any, res: any) => {
 }
 
 export const viewProfilePictureService = async (req: any, res: any) => {
-  console.log("reached viewProfilePictureService");
   try {
     const user_id = req.query.user_id;
     res.status(200).json(await getProfilePicture(user_id)
   );
   } catch (error: any) {
-    console.log("error in viewProfilePictureService", error.message);
     res.status(401).json(error.message);
   }
 }
