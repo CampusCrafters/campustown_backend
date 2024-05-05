@@ -1,7 +1,7 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { addUser, checkEmailExists } from '../../DB/userDbFunctions';
-import { createUsersTable, createUserProjectsTable, createUserExperienceTable, createProjectsTable } from '../../DB/tables';
+import { createUsersTable, createUserProjectsTable, createUserExperienceTable, createProjectsTable, createProjectApplicationsTable } from '../../DB/tables';
 
 export const getUserInfoFromGoogle = async (access_token: string) => {
     const response = await axios.post(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
@@ -46,6 +46,7 @@ export const storeUserData = async (userInfo: any) => {
         await createUserProjectsTable();
         await createUserExperienceTable();
         await createProjectsTable();
+        await createProjectApplicationsTable();
     
         const Email = userInfo.email;
         const exists = await checkEmailExists(Email);
