@@ -1,4 +1,5 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications } from "../../DB/userDbFunctions"
+import fs from 'fs';
+import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, addProfilePicture, getProfilePicture } from "../../DB/userDbFunctions"
 
 export const viewProfileService = async (req: any, res: any) => {
   try {
@@ -8,6 +9,34 @@ export const viewProfileService = async (req: any, res: any) => {
     res.status(401).json(error.message);
   }
 };
+
+export const addProfilePictureService = async (req: any, res: any) => {
+  console.log("reached addProfilePictureService");
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const imageFile = req.file;
+    if (!imageFile) {
+      return res.status(400).send('No file uploaded.');
+    }
+    const fileContent = await fs.promises.readFile(imageFile.path);
+    await addProfilePicture(user_id, imageFile.originalname, imageFile.mimetype, fileContent);
+    res.status(200).json("Profile picture added successfully");
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
+
+export const viewProfilePictureService = async (req: any, res: any) => {
+  console.log("reached viewProfilePictureService");
+  try {
+    const user_id = req.query.user_id;
+    res.status(200).json(await getProfilePicture(user_id)
+  );
+  } catch (error: any) {
+    console.log("error in viewProfilePictureService", error.message);
+    res.status(401).json(error.message);
+  }
+}
 
 export const editProfileService = async (req: any, res: any) => {
   try {
@@ -127,3 +156,4 @@ export const getMyApplicationsService = async (req: any, res: any) => {
     res.status(401).json(error.message);
   }
 }
+
