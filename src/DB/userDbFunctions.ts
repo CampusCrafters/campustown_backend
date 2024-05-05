@@ -41,7 +41,7 @@ export const addProfilePicture = async (user_id: number, imageUrl: string): Prom
   }
 }
 
-export const updateProfilePicture = async (user_id: number, imageUrl: string): Promise<void> => {
+export const updateProfilePicture = async (user_id: number, imageUrl: string | null): Promise<void> => {
   try {
     const client = await pool.connect();
     const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;

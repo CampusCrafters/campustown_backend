@@ -10,23 +10,33 @@ export const viewProfileService = async (req: any, res: any) => {
   }
 };
 
-export const addProfilePictureService = async (req: any, res: any) => {
+export const profilePictureService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const { fileName, buffer, mimetype } = req.file;
-    if (!req.file) {
-      return res.status(400).send('No file uploaded.');
-    }
-    const imageUrl = await uploadImgToS3(fileName, buffer, mimetype);
-    if(await getProfilePicture(user_id)) {
+    if (req.method === 'POST') {
+      const { fileName, buffer, mimetype } = req.file;
+      if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+      }
+      const imageUrl = await uploadImgToS3(fileName, buffer, mimetype);
+      await addProfilePicture(user_id, imageUrl);
+      res.status(200).json({ imageUrl: imageUrl });
+    } else if (req.method === 'PUT') {
+      const { fileName, buffer, mimetype } = req.file;
+      if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+      }
+      const imageUrl = await uploadImgToS3(fileName, buffer, mimetype);
       await updateProfilePicture(user_id, imageUrl);
       res.status(200).json({ imageUrl: imageUrl });
-      return;
+    } else if (req.method === 'DELETE') {
+      await updateProfilePicture(user_id, null);
+      res.status(200).json("Profile picture deleted successfully");
+    } else {
+      res.status(400).json("Invalid request method");
     }
-    await addProfilePicture(user_id, imageUrl);
-    res.status(200).json({ imageUrl: imageUrl });
   } catch (error: any) {
-      res.status(400).json(error.message);
+    res.status(400).json(error.message);
   }
 }
 
