@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    tools {nodejs "node"}
+    stages {
+        stage('Checkout Repo 2') {
+            steps {
+                script {
+                    git branch: 'main',url: 
+'https://github.com/CampusCrafters/CampusConnect_Frontend.git'
+                }
+            }
+        }
+        stage('Create .env file for FrontEnd') {
+            steps {
+                script {
+                    def envContent = """
+                        VITE_BACKEND_URL=http://localhost:5000
+                    """
+                    writeFile(file: '.env', text: envContent.trim())
+                }
+            }
+        }
+        stage('Build Repo 2') {
+            steps {
+                dir('frontend') {
+                    nodejs('node') {
+                        sh 'npm install'
+                        sh 'npm run dev'
+                    }
+                }
+            }
+        }
+    }
+}
+
