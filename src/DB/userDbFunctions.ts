@@ -1,6 +1,11 @@
 import { pool } from "./tables";
 
-export const addUser = async (name: string,email: string,rollnumber: string,batch: number,branch: string
+export const addUser = async (
+  name: string,
+  email: string,
+  rollnumber: string,
+  batch: number,
+  branch: string
 ): Promise<void> => {
   try {
     const client = await pool.connect();
@@ -29,16 +34,10 @@ export const getUserProfile = async (email: string) => {
   }
 };
 
-<<<<<<< Updated upstream
-export const addProfilePicture = async (user_id: number, imageUrl: string): Promise<void> => {
-=======
 export const addProfilePicture = async (
   user_id: number,
-  filename: string,
-  mimetype: string,
-  fileContent: Buffer
+  imageUrl: string
 ): Promise<void> => {
->>>>>>> Stashed changes
   try {
     const client = await pool.connect();
     const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
@@ -49,9 +48,11 @@ export const addProfilePicture = async (
     console.error("Error adding profile picture to database:", error);
     throw new Error("Error adding profile picture to database");
   }
-<<<<<<< Updated upstream
-}
-export const updateProfilePicture = async (user_id: number, imageUrl: string | null): Promise<void> => {
+};
+export const updateProfilePicture = async (
+  user_id: number,
+  imageUrl: string | null
+): Promise<void> => {
   try {
     const client = await pool.connect();
     const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
@@ -60,12 +61,9 @@ export const updateProfilePicture = async (user_id: number, imageUrl: string | n
     client.release();
   } catch (error) {
     console.error("Error updating profile picture on database:", error);
-    throw new Error('Error updating profile picture on database');
+    throw new Error("Error updating profile picture on database");
   }
-}
-=======
 };
->>>>>>> Stashed changes
 
 export const getProfilePicture = async (user_id: number) => {
   try {
@@ -75,13 +73,7 @@ export const getProfilePicture = async (user_id: number) => {
     const result = await client.query(query, values);
     const profilePicture = result.rows[0];
     client.release();
-<<<<<<< Updated upstream
     return profilePicture || null;
-=======
-    return (
-      profilePicture || `No profile picture found for user with id ${user_id}`
-    );
->>>>>>> Stashed changes
   } catch (error) {
     console.error("Error getting profile picture from database:", error);
     throw new Error("Error getting profile picture from database");
