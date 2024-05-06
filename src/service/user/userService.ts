@@ -1,5 +1,21 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, addProfilePicture, updateProfilePicture, getProfilePicture } from "../../DB/userDbFunctions"
-import { uploadImgToS3 } from "../user/userHelper";
+import fs from "fs";
+import {
+  getUserProfile,
+  updateUserProfile,
+  addProfileProject,
+  editProfileProject,
+  getProfileProject,
+  checkProfileProjectOwner,
+  deleteProfileProject,
+  getProfileExperience,
+  addProfileExperience,
+  checkProfileExperienceOwner,
+  editProfileExperience,
+  deleteProfileExperience,
+  getMyApplications,
+  addProfilePicture,
+  getProfilePicture,
+} from "../../DB/userDbFunctions";
 
 export const viewProfileService = async (req: any, res: any) => {
   try {
@@ -19,40 +35,31 @@ export const profilePictureService = async (req: any, res: any) => {
   console.log("originalname", originalname);
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    if (req.method === 'POST') {
-      if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-      }
-      const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
-      await addProfilePicture(user_id, imageUrl);
-      res.status(200).json({ imageUrl: imageUrl });
-    } else if (req.method === 'PUT') {
-      if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-      }
-      const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
-      await updateProfilePicture(user_id, imageUrl);
-      res.status(200).json({ imageUrl: imageUrl });
-    } else if (req.method === 'DELETE') {
-      await updateProfilePicture(user_id, null);
-      res.status(200).json("Profile picture deleted successfully");
-    } else {
-      res.status(400).json("Invalid request method");
+    const imageFile = req.file;
+    if (!imageFile) {
+      return res.status(400).send("No file uploaded.");
     }
+    const fileContent = await fs.promises.readFile(imageFile.path);
+    await addProfilePicture(
+      user_id,
+      imageFile.originalname,
+      imageFile.mimetype,
+      fileContent
+    );
+    res.status(200).json("Profile picture added successfully");
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 export const viewProfilePictureService = async (req: any, res: any) => {
   try {
     const user_id = req.query.user_id;
-    res.status(200).json(await getProfilePicture(user_id)
-  );
+    res.status(200).json(await getProfilePicture(user_id));
   } catch (error: any) {
     res.status(401).json(error.message);
   }
-}
+};
 
 export const editProfileService = async (req: any, res: any) => {
   try {
@@ -65,7 +72,11 @@ export const editProfileService = async (req: any, res: any) => {
   }
 };
 
-export const addProfileProjectService = async (req: any, res: any, next: any) => {
+export const addProfileProjectService = async (
+  req: any,
+  res: any,
+  next: any
+) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const projectInfo = req.body;
@@ -104,7 +115,7 @@ export const deleteProfileProjectService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const user_project_id = req.query.user_project_id;
-    if (await checkProfileProjectOwner(user_id, user_project_id) === false) {
+    if ((await checkProfileProjectOwner(user_id, user_project_id)) === false) {
       res.status(401).json("You are not authorized to delete this project");
     }
     await deleteProfileProject(user_project_id);
@@ -138,7 +149,9 @@ export const editExperienceService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const user_experience_id = req.query.user_experience_id;
-    if (await checkProfileExperienceOwner(user_id, user_experience_id) === false) {
+    if (
+      (await checkProfileExperienceOwner(user_id, user_experience_id)) === false
+    ) {
       res.status(401).json("You are not authorized to edit this experience");
     }
     const experienceInfo = req.body;
@@ -153,7 +166,9 @@ export const deleteExperienceService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const user_experience_id = req.query.user_experience_id;
-    if (await checkProfileExperienceOwner(user_id, user_experience_id) === false) {
+    if (
+      (await checkProfileExperienceOwner(user_id, user_experience_id)) === false
+    ) {
       res.status(401).json("You are not authorized to delete this experience");
     }
     await deleteProfileExperience(user_experience_id);
@@ -171,5 +186,30 @@ export const getMyApplicationsService = async (req: any, res: any) => {
   } catch (error: any) {
     res.status(401).json(error.message);
   }
-}
+};
 
+export const addResumeService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const pdffile = req.file;
+    if (!pdffile) {
+      return res.status(400).send("No file uploaded.");
+    }
+    const fileData = req.file.buffer;
+    await addProfileResume(user_id, fileData);
+    res.status(200).json("Resume uploaded successfully");
+  } catch (err: any) {
+    res.status(401).json(err.message);
+  }
+};
+
+export const viewResumeService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    const resumeArrayBuffer = await viewProfileResume(user_id);
+    console.log(resumeArrayBuffer);
+    res.status(200).json(resumeArrayBuffer);
+  } catch (err: any) {
+    res.status(401).json(err.message);
+  }
+};
