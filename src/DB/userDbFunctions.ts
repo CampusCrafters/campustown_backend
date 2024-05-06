@@ -29,16 +29,7 @@ export const getUserProfile = async (email: string) => {
   }
 };
 
-<<<<<<< Updated upstream
 export const addProfilePicture = async (user_id: number, imageUrl: string): Promise<void> => {
-=======
-export const addProfilePicture = async (
-  user_id: number,
-  filename: string,
-  mimetype: string,
-  fileContent: Buffer
-): Promise<void> => {
->>>>>>> Stashed changes
   try {
     const client = await pool.connect();
     const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
@@ -49,7 +40,6 @@ export const addProfilePicture = async (
     console.error("Error adding profile picture to database:", error);
     throw new Error("Error adding profile picture to database");
   }
-<<<<<<< Updated upstream
 }
 export const updateProfilePicture = async (user_id: number, imageUrl: string | null): Promise<void> => {
   try {
@@ -63,9 +53,6 @@ export const updateProfilePicture = async (user_id: number, imageUrl: string | n
     throw new Error('Error updating profile picture on database');
   }
 }
-=======
-};
->>>>>>> Stashed changes
 
 export const getProfilePicture = async (user_id: number) => {
   try {
