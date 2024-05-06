@@ -15,7 +15,11 @@ import {
   getMyApplications,
   addProfilePicture,
   getProfilePicture,
+  viewProfileResume,
+  addProfileResume,
+  updateProfilePicture,
 } from "../../DB/userDbFunctions";
+import { uploadImgToS3 } from "../user/userHelper";
 
 export const viewProfileService = async (req: any, res: any) => {
   try {
@@ -35,18 +39,26 @@ export const profilePictureService = async (req: any, res: any) => {
   console.log("originalname", originalname);
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const imageFile = req.file;
-    if (!imageFile) {
-      return res.status(400).send("No file uploaded.");
+    if (req.method === "POST") {
+      if (!req.file) {
+        return res.status(400).send("No file uploaded.");
+      }
+      const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
+      await addProfilePicture(user_id, imageUrl);
+      res.status(200).json({ imageUrl: imageUrl });
+    } else if (req.method === "PUT") {
+      if (!req.file) {
+        return res.status(400).send("No file uploaded.");
+      }
+      const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
+      await updateProfilePicture(user_id, imageUrl);
+      res.status(200).json({ imageUrl: imageUrl });
+    } else if (req.method === "DELETE") {
+      await updateProfilePicture(user_id, null);
+      res.status(200).json("Profile picture deleted successfully");
+    } else {
+      res.status(400).json("Invalid request method");
     }
-    const fileContent = await fs.promises.readFile(imageFile.path);
-    await addProfilePicture(
-      user_id,
-      imageFile.originalname,
-      imageFile.mimetype,
-      fileContent
-    );
-    res.status(200).json("Profile picture added successfully");
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
