@@ -31,7 +31,7 @@ export const getUserProfile = async (email: string) => {
 export const addProfilePicture = async (user_id: number, imageUrl: string): Promise<void> => {
   try {
     const client = await pool.connect();
-    const query = `INSERT INTO users (profile_picture) VALUES ($1) WHERE user_id = $2`;
+    const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
     const values = [imageUrl, user_id];
     await client.query(query, values);
     client.release();
@@ -40,7 +40,6 @@ export const addProfilePicture = async (user_id: number, imageUrl: string): Prom
     throw new Error('Error adding profile picture to database');
   }
 }
-
 export const updateProfilePicture = async (user_id: number, imageUrl: string | null): Promise<void> => {
   try {
     const client = await pool.connect();

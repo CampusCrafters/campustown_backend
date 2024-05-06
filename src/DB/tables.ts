@@ -9,7 +9,7 @@ export async function createUsersTable(): Promise<void> {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         user_id SERIAL PRIMARY KEY,
-        profile_picture BYTEA DEFAULT NULL,
+        profile_picture VARCHAR(255) DEFAULT NULL,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
         rollnumber VARCHAR(20) NOT NULL UNIQUE,
