@@ -10,7 +10,7 @@ const router = Router();
 router.use(bodyParser.json());
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage});
+const upload = multer({ storage: storage}); // hello
 
 router.post("/gsignin", signinService);
 router.get("/oauth", getTokensAndStoreDataService);
