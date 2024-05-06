@@ -11,7 +11,6 @@ const oAuth2Client = new OAuth2Client(
   );
 
 export const signinService = async (req: any, res: any) => {
-  // Headers setup
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Referrer-Policy", "no-referrer-when-downgrade");
 
@@ -41,14 +40,13 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
       }
       try {
         await storeUserData(userInfo);
-      } catch (error) {
+      } catch (error: any) {
         console.log("Error storing user data:", error);
-        return res.status(500).send("Error storing user data");
+        return res.status(500).json(error.message);
       }
       const verifyToken = generateJWT(userInfo);
       console.log("jwt", verifyToken);
 
-      // Set JWT as HTTP-only cookies // not working
       try {
         // Set the cookie
         await res.cookie("jwt", verifyToken, {
@@ -60,8 +58,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         console.error("Error setting cookie:", error);
         res.status(500).send("Error setting cookie");
       }
-      // Redirect after setting the cookie
-      res.redirect(`${frontendURL}/dashboard`);
+      res.redirect(`${frontendURL}/dashboard`); // Redirect after setting the cookie
       
     } else {
       console.error("Access token not found");
@@ -74,20 +71,17 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
 };
 
 export const verifyTokenService = async (req: any, res: any) => {
-  console.log("reached verifyTokenService");
   const token = req.cookies.jwt;
   if (!token) {
     console.log("No token in the query");
     return res.status(400).json({ error: "No token provided" });
   }
   try {
-    const status = await verifyJWT(token);
-    if (status) {
-      res.status(200).json({ success: status, decoded: status });
-    } else {
-      res.status(401).json({ success: status });
-    }
+    const decoded = await verifyJWT(token);
+    if (decoded) {
+      res.status(200).json({ decoded: decoded });
+    } 
   } catch (error) {
-    res.status(503).json({ "Error in verify token service": error });
+    res.status(500).json({ "Error in verify token service": error });
   }
 };

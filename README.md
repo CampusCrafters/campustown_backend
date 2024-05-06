@@ -24,32 +24,10 @@ To start the server, run:
 npm start
 ```
 
-## To setup a PostgresDB for testing using docker
+## Connect to postgres DB using pgAdmin (any GUI tool)
 
-Install docker
+Install pgAdmin for desktop
 
-1. To start the DB server:
+Register a new server with DB credentials.
 
-   ```
-   docker compose up -d
-   ```
 
-2. To stop :
-
-   ```
-   docker compose down
-   ```
-
-3. Connect db to pgadmin (GUI):
-
-- Go to [http://localhost:5050](http://localhost:5050)
-- Right click on servers and register a new server
-- Under general tab
-  - Name: any name
-- Under connection tab
-  - Host name: db
-  - Port: 5432
-  - Maintanence database: postgres
-  - Username: myuser
-  - Password: mypassword
-  - Save
