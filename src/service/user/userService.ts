@@ -15,22 +15,22 @@ export const profilePictureService = async (req: any, res: any) => {
   console.log("req method", req.method);
   console.log("req.body", req.body);
   console.log("req.file", req.file);
+  const { originalname, buffer, mimetype } = req.file;
+  console.log("originalname", originalname);
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     if (req.method === 'POST') {
-      const { fileName, buffer, mimetype } = req.file;
       if (!req.file) {
         return res.status(400).send('No file uploaded.');
       }
-      const imageUrl = await uploadImgToS3(fileName, buffer, mimetype);
+      const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
       await addProfilePicture(user_id, imageUrl);
       res.status(200).json({ imageUrl: imageUrl });
     } else if (req.method === 'PUT') {
-      const { fileName, buffer, mimetype } = req.file;
       if (!req.file) {
         return res.status(400).send('No file uploaded.');
       }
-      const imageUrl = await uploadImgToS3(fileName, buffer, mimetype);
+      const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
       await updateProfilePicture(user_id, imageUrl);
       res.status(200).json({ imageUrl: imageUrl });
     } else if (req.method === 'DELETE') {
@@ -40,7 +40,7 @@ export const profilePictureService = async (req: any, res: any) => {
       res.status(400).json("Invalid request method");
     }
   } catch (error: any) {
-    res.status(400).json(error.message);
+    res.status(400).json({ error: error.message });
   }
 }
 
