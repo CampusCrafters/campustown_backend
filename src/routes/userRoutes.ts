@@ -9,7 +9,8 @@ import { viewProfileService, editProfileService, addProfileProjectService, viewP
 const router = Router();
 router.use(bodyParser.json());
 
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage});
 
 router.post("/gsignin", signinService);
 router.get("/oauth", getTokensAndStoreDataService);

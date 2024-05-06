@@ -11,6 +11,10 @@ export const viewProfileService = async (req: any, res: any) => {
 };
 
 export const profilePictureService = async (req: any, res: any) => {
+  console.log("reached Profile Picture Service");
+  console.log("req method", req.method);
+  console.log("req.body", req.body);
+  console.log("req.file", req.file);
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     if (req.method === 'POST') {
