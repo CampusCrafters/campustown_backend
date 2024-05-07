@@ -24,6 +24,7 @@ import {
   viewProfilePictureService,
   addResumeService,
   viewResumeService,
+  deleteResumeService,
 } from "../service/user/userService";
 
 const router = Router();
@@ -59,7 +60,7 @@ router.post(
   upload.single("file"),
   addResumeService
 );
-//router.delete("/deleteResume", authMiddleware, deleteResumeService);
+router.delete("/deleteResume", authMiddleware, deleteResumeService);
 router.get("/viewResume", authMiddleware, viewResumeService);
 
 router.get("/viewProfileProject", viewProfileProjectService);

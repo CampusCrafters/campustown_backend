@@ -311,16 +311,21 @@ export const checkEmailExists = async (email: string) => {
 };
 
 export const addProfileResume = async (user_id: number, fileData: Buffer) => {
+  const client = await pool.connect();
   try {
-    const client = await pool.connect();
+    await client.query("BEGIN");
+    const removeresume = "UPDATE users SET resume = NULL WHERE user_id=$1";
+    await client.query(removeresume, [user_id]);
     const query = "UPDATE users SET resume = $1 WHERE user_id = $2";
-    console.log(query);
     const values = [fileData, user_id];
     await client.query(query, values);
-    client.release();
+    await client.query("COMMIT");
   } catch (err: any) {
+    await client.query("ROLLBACK");
     console.error("Error uploading resume in database: ", err.message);
     throw new Error("Error uploading resume in database");
+  } finally {
+    client.release();
   }
 };
 
@@ -333,7 +338,6 @@ export const viewProfileResume = async (user_id: number) => {
       "resume" +
       " FROM users WHERE user_id= $1";
     const values = [user_id];
-    console.log(query);
     const result = await client.query(query, values);
     const resumeBuffer = result.rows[0];
     client.release;
@@ -341,5 +345,18 @@ export const viewProfileResume = async (user_id: number) => {
   } catch (err: any) {
     console.error("Error viewing resume from database: ", err.message);
     throw new Error("Error viewing resume from database");
+  }
+};
+
+export const deleteProfileResume = async (user_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = "UPDATE users SET resume = NULL WHERE user_id = $1";
+    const values = [user_id];
+    await client.query(query, values);
+    client.release();
+  } catch (err: any) {
+    console.error("Error deleting resume from database: ", err.message);
+    throw new Error("Error deleting resume from databases");
   }
 };
