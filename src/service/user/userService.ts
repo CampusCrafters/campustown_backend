@@ -18,6 +18,7 @@ import {
   viewProfileResume,
   addProfileResume,
   updateProfilePicture,
+  deleteProfileResume,
 } from "../../DB/userDbFunctions";
 import { uploadImgToS3 } from "../user/userHelper";
 
@@ -219,8 +220,17 @@ export const viewResumeService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const resumeArrayBuffer = await viewProfileResume(user_id);
-    console.log(resumeArrayBuffer);
     res.status(200).json(resumeArrayBuffer);
+  } catch (err: any) {
+    res.status(401).json(err.message);
+  }
+};
+
+export const deleteResumeService = async (req: any, res: any) => {
+  try {
+    const { user_id } = await getUserProfile(req.decoded.email);
+    await deleteProfileResume(user_id);
+    res.status(200).json("Resume deleted successfully");
   } catch (err: any) {
     res.status(401).json(err.message);
   }
