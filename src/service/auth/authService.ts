@@ -71,6 +71,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
 };
 
 export const verifyTokenService = async (req: any, res: any) => {
+  console.log("Verifying token");
   const token = req.cookies.jwt;
   if (!token) {
     console.log("No token in the query");
