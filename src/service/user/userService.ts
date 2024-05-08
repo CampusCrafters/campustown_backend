@@ -1,4 +1,3 @@
-import fs from "fs";
 import {
   getUserProfile,
   updateUserProfile,
@@ -13,11 +12,10 @@ import {
   editProfileExperience,
   deleteProfileExperience,
   getMyApplications,
-  addProfilePicture,
+  setProfilePicture,
   getProfilePicture,
   viewProfileResume,
   addProfileResume,
-  updateProfilePicture,
   deleteProfileResume,
 } from "../../DB/userDbFunctions";
 import { uploadImgToS3 } from "../user/userHelper";
@@ -32,45 +30,28 @@ export const viewProfileService = async (req: any, res: any) => {
 };
 
 export const profilePictureService = async (req: any, res: any) => {
-  console.log("reached Profile Picture Service");
-  console.log("req method", req.method);
-  console.log("req.body", req.body);
-  console.log("req.file", req.file);
-  const { originalname, buffer, mimetype } = req.file;
-  console.log("originalname", originalname);
   try {
+    const { originalname, buffer, mimetype } = req.file;
     const { user_id } = await getUserProfile(req.decoded.email);
-    if (req.method === "POST") {
+
+    if (req.method === "POST" || req.method === "PUT") {
       if (!req.file) {
         return res.status(400).send("No file uploaded.");
       }
       const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
-      await addProfilePicture(user_id, imageUrl);
-      res.status(200).json({ imageUrl: imageUrl });
-    } else if (req.method === "PUT") {
-      if (!req.file) {
-        return res.status(400).send("No file uploaded.");
-      }
-      const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
-      await updateProfilePicture(user_id, imageUrl);
+      await setProfilePicture(user_id, imageUrl);
       res.status(200).json({ imageUrl: imageUrl });
     } else if (req.method === "DELETE") {
-      await updateProfilePicture(user_id, null);
+      await setProfilePicture(user_id, null);
       res.status(200).json("Profile picture deleted successfully");
+    } else if (req.method === "GET") {
+      const profilePicture = await getProfilePicture(user_id);
+      res.status(200).json({ profilePicture: profilePicture });
     } else {
       res.status(400).json("Invalid request method");
     }
   } catch (error: any) {
     res.status(400).json({ error: error.message });
-  }
-};
-
-export const viewProfilePictureService = async (req: any, res: any) => {
-  try {
-    const user_id = req.query.user_id;
-    res.status(200).json(await getProfilePicture(user_id));
-  } catch (error: any) {
-    res.status(401).json(error.message);
   }
 };
 
