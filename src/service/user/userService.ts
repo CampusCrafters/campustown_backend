@@ -1,23 +1,4 @@
-import {
-  getUserProfile,
-  updateUserProfile,
-  addProfileProject,
-  editProfileProject,
-  getProfileProject,
-  checkProfileProjectOwner,
-  deleteProfileProject,
-  getProfileExperience,
-  addProfileExperience,
-  checkProfileExperienceOwner,
-  editProfileExperience,
-  deleteProfileExperience,
-  getMyApplications,
-  setProfilePicture,
-  getProfilePicture,
-  viewProfileResume,
-  addProfileResume,
-  deleteProfileResume,
-} from "../../DB/userDbFunctions";
+import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, setProfilePicture, getProfilePicture, viewProfileResume, addProfileResume, deleteProfileResume } from "../../DB/userDbFunctions"; 
 import { uploadImgToS3 } from "../user/userHelper";
 
 export const viewProfileService = async (req: any, res: any) => {
@@ -66,11 +47,7 @@ export const editProfileService = async (req: any, res: any) => {
   }
 };
 
-export const addProfileProjectService = async (
-  req: any,
-  res: any,
-  next: any
-) => {
+export const addProfileProjectService = async (req: any, res: any, next: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const projectInfo = req.body;
