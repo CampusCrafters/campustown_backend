@@ -21,7 +21,6 @@ import {
   deleteExperienceService,
   getMyApplicationsService,
   profilePictureService,
-  viewProfilePictureService,
   addResumeService,
   viewResumeService,
   deleteResumeService,
@@ -52,7 +51,7 @@ router.put(
   profilePictureService
 );
 router.delete("/deleteProfilePicture", authMiddleware, profilePictureService);
-router.get("/viewProfilePicture", viewProfilePictureService);
+router.get("/viewProfilePicture", profilePictureService);
 
 router.post(
   "/addResume",

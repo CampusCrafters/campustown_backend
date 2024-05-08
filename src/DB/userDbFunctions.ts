@@ -34,34 +34,25 @@ export const getUserProfile = async (email: string) => {
   }
 };
 
-export const addProfilePicture = async (
-  user_id: number,
-  imageUrl: string
-): Promise<void> => {
-  try {
-    const client = await pool.connect();
-    const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
-    const values = [imageUrl, user_id];
-    await client.query(query, values);
-    client.release();
-  } catch (error) {
-    console.error("Error adding profile picture to database:", error);
-    throw new Error("Error adding profile picture to database");
-  }
-};
-export const updateProfilePicture = async (
+export const setProfilePicture = async (
   user_id: number,
   imageUrl: string | null
 ): Promise<void> => {
   try {
     const client = await pool.connect();
-    const query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
-    const values = [imageUrl, user_id];
+    let query, values;
+    if (imageUrl !== null) {
+      query = `UPDATE users SET profile_picture = $1 WHERE user_id = $2`;
+      values = [imageUrl, user_id];
+    } else {
+      query = `UPDATE users SET profile_picture = NULL WHERE user_id = $1`;
+      values = [user_id];
+    }
     await client.query(query, values);
     client.release();
   } catch (error) {
-    console.error("Error updating profile picture on database:", error);
-    throw new Error("Error updating profile picture on database");
+    console.error("Error setting profile picture in database:", error);
+    throw new Error("Error setting profile picture in database");
   }
 };
 
