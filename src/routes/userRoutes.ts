@@ -11,7 +11,7 @@ const storage = multer.memoryStorage(); const upload = multer({ storage: storage
 
 router.post("/gsignin", signinService); 
 router.get("/oauth", getTokensAndStoreDataService); 
-router.post("/verifyToken", verifyTokenService);
+router.get("/verifyToken", verifyTokenService);
 
 router.get("/viewProfile", viewProfileService); 
 router.put("/editProfile", authMiddleware, editProfileService); 
