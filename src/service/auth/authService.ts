@@ -58,7 +58,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         console.error("Error setting cookie:", error);
         res.status(500).send("Error setting cookie");
       }
-      res.redirect(`${frontendURL}/dashboard`); // Redirect after setting the cookie
+      res.redirect(`${frontendURL}/projects`); // Redirect after setting the cookie
       
     } else {
       console.error("Access token not found");
