@@ -8,7 +8,7 @@ const router = Router();
 router.use(bodyParser.json());
 
 router.post("/postProject", authMiddleware, postProjectService);
-router.get("/projects", getAllProjectsService);
+router.get("/all", getAllProjectsService);
 router.get("/myProjects", authMiddleware, getMyProjectsService);
 router.put("/editProject", authMiddleware, editProjectService);
 router.delete("/deleteProject", authMiddleware, deleteProjectService);

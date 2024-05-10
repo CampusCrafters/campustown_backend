@@ -9,7 +9,8 @@ export async function createUsersTable(): Promise<void> {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         user_id SERIAL PRIMARY KEY,
-        profile_picture BYTEA DEFAULT NULL,
+        profile_picture VARCHAR(255) DEFAULT NULL,
+        resume BYTEA DEFAULT NULL,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
         rollnumber VARCHAR(20) NOT NULL UNIQUE,
@@ -91,19 +92,21 @@ export async function createUserExperienceTable(): Promise<void> {
 export async function createProjectsTable(): Promise<void> {
   try {
     const query = `
-      CREATE TABLE IF NOT EXISTS projects (
-        project_id SERIAL PRIMARY KEY,
-        host_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-        members JSONB DEFAULT '[]'::jsonb, 
-        project_title VARCHAR(255) NOT NULL,
-        domain VARCHAR(255) NOT NULL,
-        description TEXT,
-        link VARCHAR(255) DEFAULT NULL,
-        required_roles TEXT[] NOT NULL DEFAULT '{}', 
-        start_date DATE NOT NULL,
-        end_date DATE DEFAULT NULL,
-        status VARCHAR(50) DEFAULT 'Open' NOT NULL
-      )
+    CREATE TABLE IF NOT EXISTS projects (
+      project_id SERIAL PRIMARY KEY,
+      host_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+      members JSONB DEFAULT '[]'::jsonb, 
+      project_title VARCHAR(255) NOT NULL,
+      domain VARCHAR(255) NOT NULL,
+      description TEXT,
+      link VARCHAR(255) DEFAULT NULL,
+      required_roles TEXT[] NOT NULL DEFAULT '{}', 
+      posted_on TIMESTAMP NOT NULL,
+      start_date DATE NOT NULL,
+      end_date DATE DEFAULT NULL,
+      status VARCHAR(50) DEFAULT 'Open' NOT NULL,
+      edited_on TIMESTAMP DEFAULT NULL
+  );
     `;
     await pool.query(query);
     console.log('Table "Projects" successfully created or already exists');
@@ -132,4 +135,4 @@ export const createProjectApplicationsTable = async (): Promise<void> => {
     console.error("Error creating ProjectApplications table:", error);
     throw error;
   }
-}
+};
