@@ -13,7 +13,7 @@ router.post("/gsignin", signinService);
 router.get("/oauth", getTokensAndStoreDataService); 
 router.get("/verifyToken", verifyTokenService);
 
-router.get("/viewProfile", viewProfileService); 
+router.get("/viewProfile", authMiddleware, viewProfileService); 
 router.put("/editProfile", authMiddleware, editProfileService); 
 router.post("/addProfilePicture", authMiddleware, upload.single("image"), profilePictureService); 
 router.put("/editProfilePicture", authMiddleware, upload.single("image"), profilePictureService); 
