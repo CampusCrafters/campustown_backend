@@ -2,7 +2,21 @@ import "dotenv/config";
 import { Router } from "express";
 import bodyParser from "body-parser";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { getAllProjectsService, postProjectService, getMyProjectsService, editProjectService, shortlistApplicantService, rejectApplicantService, deleteProjectService, editProjectStatusService } from "../service/project/projectService";
+import {
+  getAllProjectsService,
+  postProjectService,
+  getMyProjectsService,
+  editProjectService,
+  shortlistApplicantService,
+  rejectApplicantService,
+  deleteProjectService,
+  editProjectStatusService,
+  addApplicationService,
+  deleteApplicationService,
+  editApplicationService,
+  getApplicantsService,
+  acceptApplicantService,
+} from "../service/project/projectService";
 
 const router = Router();
 router.use(bodyParser.json());
@@ -15,13 +29,13 @@ router.delete("/deleteProject", authMiddleware, deleteProjectService);
 
 router.put("/editProjectStatus", authMiddleware, editProjectStatusService);
 
-// router.post('/applyProject', addApplicationService);
-// router.put('/editApplication', editApplicationService); // to change the role for which the user applied for.
-// router.delete('/deleteApplication', deleteApplicationService);
+router.post("/applyProject", authMiddleware, addApplicationService);
+router.put("/editApplication", authMiddleware, editApplicationService); // to change the role for which the user applied for.
+router.delete("/deleteApplication", authMiddleware, deleteApplicationService);
 
-// router.get('/projectApplicants', getApplicantsService);
-// router.post('/acceptApplicant', acceptApplicantService);
-router.put('/shortlistApplicant', shortlistApplicantService);
-router.put('/rejectApplicant', rejectApplicantService);
+router.get("/projectApplicants", authMiddleware, getApplicantsService);
+router.post("/acceptApplicant", authMiddleware, acceptApplicantService);
+router.put("/shortlistApplicant", authMiddleware, shortlistApplicantService);
+router.put("/rejectApplicant", authMiddleware, rejectApplicantService);
 
 export default router;
