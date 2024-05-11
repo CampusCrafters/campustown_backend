@@ -94,11 +94,11 @@ export async function createProjectsTable(): Promise<void> {
     const query = `
     CREATE TABLE IF NOT EXISTS projects (
       project_id SERIAL PRIMARY KEY,
-      host_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+      host_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE NOT NULL,
       members JSONB DEFAULT '[]'::jsonb, 
       project_title VARCHAR(255) NOT NULL,
       domain VARCHAR(255) NOT NULL,
-      description TEXT,
+      description TEXT NOT NULL,
       link VARCHAR(255) DEFAULT NULL,
       required_roles TEXT[] NOT NULL DEFAULT '{}', 
       posted_on TIMESTAMP NOT NULL,
