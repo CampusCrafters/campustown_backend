@@ -15,7 +15,7 @@ export const getAllProjects = async () => {
   }
 };
 
-export const addProject = async (user_id: number, projectInfo: object) => {
+export const addProject = async (user_id: number, projectInfo: any) => {
   try {
     const client = await pool.connect();
     const query = {
@@ -24,8 +24,16 @@ export const addProject = async (user_id: number, projectInfo: object) => {
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
       values: [
         user_id,
-        ...Object.values(projectInfo),
-        new Date().toLocaleString(),
+        JSON.stringify(projectInfo.members), // Stringify the members array
+        projectInfo.project_title,
+        projectInfo.description,
+        projectInfo.domain,
+        projectInfo.link,
+        projectInfo.required_roles,
+        projectInfo.start_date,
+        projectInfo.end_date,
+        projectInfo.status,
+        new Date().toISOString(), // Get the current date and time
       ],
     };
 
