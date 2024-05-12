@@ -14,6 +14,7 @@ import {
   changeRole,
   getApplicants,
   acceptApplicant,
+  checkApplicationExists,
 } from "../../DB/projectDbFunctions";
 
 export const postProjectService = async (req: any, res: any) => {
@@ -149,6 +150,10 @@ export const addApplicationService = async (req: any, res: any) => {
     //console.log(project_id);
     if ((await checkProjectOwner(user_id, project_id)) === true) {
       res.status(401).json("You cannot apply to your own project");
+    } else if (
+      (await checkApplicationExists(user_id, project_id, role)) === true
+    ) {
+      res.status(401).json("You have already applied to this project");
     } else {
       await addApplication(user_id, status, project_id, role, applicant_name);
       res.status(200).json("Application added successfully");
@@ -161,8 +166,12 @@ export const addApplicationService = async (req: any, res: any) => {
 export const deleteApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const project_id = req.query.project_id;
-    const role = req.query.role;
+    const info = req.body;
+    const project_id = info.project_id;
+    const role = info.role;
+    console.log("role:" + role);
+    console.log(project_id);
+    console.log(user_id);
     await deleteApplication(user_id, project_id, role);
     res.status(200).json("Application deleted successfully");
   } catch (error) {
@@ -173,9 +182,12 @@ export const deleteApplicationService = async (req: any, res: any) => {
 export const editApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const project_id = req.query.project_id;
-    const role = req.query.role;
-    const newRole = req.query.newRole;
+    const info = req.body;
+    const project_id = info.project_id;
+    const role = info.role;
+    const newRole = info.newRole;
+    console.log(role);
+    console.log(newRole);
     await changeRole(user_id, project_id, role, newRole);
     res.status(200).json("Application edited successfully");
   } catch (error) {
