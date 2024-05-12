@@ -154,7 +154,7 @@ export const acceptApplicant = async (
       text: `
         UPDATE project_applications 
         SET status = 'Accepted' AND reviewed_on = $4
-        WHERE project_id = $1 AND user_id = $2 AND role = $3
+        WHERE project_id = $1 AND user_id = $2 AND role_name = $3
       `,
       values: [
         project_id,
@@ -182,7 +182,7 @@ export const shortlistApplicant = async (
       text: `
         UPDATE project_applications 
         SET status = 'Shortlisted' AND reviewed_on = $4
-        WHERE project_id = $1 AND user_id = $2 AND role = $3
+        WHERE project_id = $1 AND user_id = $2 AND role_name = $3
       `,
       values: [
         project_id,
@@ -210,7 +210,7 @@ export const rejectApplicant = async (
       text: `
         UPDATE project_applications 
         SET status = 'Rejected' AND reviewed_on = $4
-        WHERE project_id = $1 AND user_id = $2 AND role = $3
+        WHERE project_id = $1 AND user_id = $2 AND role_name = $3
       `,
       values: [
         project_id,
@@ -238,7 +238,7 @@ export const addApplication = async (
     const client = await pool.connect();
     const query = {
       text: `
-        INSERT INTO project_applications (user_id, applicant_name, project_id, role, status, applied_on)
+        INSERT INTO project_applications (user_id, applicant_name, project_id, role_name, status, applied_on)
         VALUES ($1, $2, $3, $4, $5, $6)
       `,
       values: [
@@ -247,7 +247,7 @@ export const addApplication = async (
         project_id,
         role,
         status,
-        new Date().toLocaleString(),
+        new Date().toISOString(),
       ],
     };
     await client.query(query);
@@ -258,22 +258,55 @@ export const addApplication = async (
   }
 };
 
-export const deleteApplication = async (
+export const checkApplicationExistsById = async (
+  user_id: number,
   project_id: number,
-  role_name: string,
-  applicant_id: number
+  role_name: string
 ) => {
   try {
     const client = await pool.connect();
     const query = {
       text: `
-        DELETE FROM project_applications
-        WHERE project_id = $1 AND user_id = $2 AND role = $3
+        SELECT EXISTS (
+          SELECT 1
+          FROM project_applications
+          WHERE user_id = $1 AND project_id = $2 AND role_name = $3
+        )
       `,
-      values: [project_id, applicant_id, role_name],
+      values: [user_id, project_id, role_name],
     };
-    await client.query(query);
+    const result = await client.query(query);
     client.release();
+    return result.rows[0].exists;
+  } catch (error: any) {
+    console.error("Error checking application in database:", error.message);
+    throw new Error("Error checking application in database");
+  }
+};
+
+export const deleteApplication = async (
+  user_id: number,
+  project_id: number,
+  role_name: string
+) => {
+  //delete only if the application exists
+
+  try {
+    const client = await pool.connect();
+    //check if the application exists
+    if (!(await checkApplicationExistsById(user_id, project_id, role_name))) {
+      throw new Error("Application does not exist");
+    } else {
+      const query = {
+        text: `
+        DELETE FROM project_applications
+        WHERE user_id = $1 AND project_id = $2 AND role_name = $3
+      `,
+        values: [user_id, project_id, role_name],
+      };
+      await client.query(query);
+      client.release();
+    }
   } catch (error: any) {
     console.error("Error deleting application in database:", error.message);
     throw new Error("Error deleting application in database");
@@ -291,8 +324,8 @@ export const changeRole = async (
     const query = {
       text: `
         UPDATE project_applications
-        SET role = $1
-        WHERE project_id = $2 AND user_id = $3 AND role = $4
+        SET role_name = $1
+        WHERE project_id = $2 AND user_id = $3 AND role_name = $4
       `,
       values: [newRole, project_id, user_id, role],
     };
@@ -317,5 +350,34 @@ export const getApplicants = async (project_id: number) => {
   } catch (error: any) {
     console.error("Error getting applicants in database:", error.message);
     throw new Error("Error getting applicants in database");
+  }
+};
+
+export const checkApplicationExists = async (
+  user_id: number,
+  project_id: number,
+  role: string
+) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+        SELECT EXISTS (
+          SELECT 1
+          FROM project_applications
+          WHERE user_id = $1 AND project_id = $2 AND role_name = $3
+        )
+      `,
+      //convert double quotes to single quotes for role
+
+      values: [user_id, project_id, role],
+    };
+    const result = await client.query(query);
+    client.release();
+    console.log(result.rows[0].exists);
+    return result.rows[0].exists;
+  } catch (error: any) {
+    console.error("Error checking application in database:", error.message);
+    throw new Error("Error checking application in database");
   }
 };
