@@ -15,6 +15,7 @@ import {
   getApplicants,
   acceptApplicant,
   checkApplicationExists,
+  getApplicantName,
 } from "../../DB/projectDbFunctions";
 
 export const postProjectService = async (req: any, res: any) => {
@@ -145,7 +146,7 @@ export const addApplicationService = async (req: any, res: any) => {
     //console.log(applicationInfo);
     const project_id = applicationInfo.project_id;
     const role = applicationInfo.role;
-    const applicant_name = applicationInfo.applicant_name;
+    const applicant_name = await getApplicantName(user_id);
     const status = "Pending";
     //console.log(project_id);
     if ((await checkProjectOwner(user_id, project_id)) === true) {

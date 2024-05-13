@@ -236,6 +236,14 @@ export const addApplication = async (
 ) => {
   try {
     const client = await pool.connect();
+    //check whether the application already exists
+    if (await checkApplicationExistsById(user_id, project_id, role)) {
+      throw new Error("Application already exists");
+    }
+    //check whether the role exists in the project
+    if (!(await checkRoleExists(project_id, role))) {
+      throw new Error("Role does not exist in the project");
+    }
     const query = {
       text: `
         INSERT INTO project_applications (user_id, applicant_name, project_id, role_name, status, applied_on)
@@ -379,5 +387,44 @@ export const checkApplicationExists = async (
   } catch (error: any) {
     console.error("Error checking application in database:", error.message);
     throw new Error("Error checking application in database");
+  }
+};
+
+export const checkRoleExists = async (project_id: number, role: string) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+        SELECT EXISTS (
+          SELECT 1
+          FROM projects
+          WHERE project_id = $1 AND $2 = ANY(required_roles)
+        )
+      `,
+      values: [project_id, role],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0].exists;
+  } catch (error: any) {
+    console.error("Error checking role in database:", error.message);
+    throw new Error("Error checking role in database");
+  }
+};
+
+//get applicant name with user_id
+export const getApplicantName = async (user_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: "SELECT name FROM users WHERE user_id = $1",
+      values: [user_id],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0].name;
+  } catch (error: any) {
+    console.error("Error getting applicant name in database:", error.message);
+    throw new Error("Error getting applicant name in database");
   }
 };
