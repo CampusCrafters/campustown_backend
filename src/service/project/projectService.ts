@@ -141,19 +141,12 @@ export const rejectApplicantService = async (req: any, res: any) => {
 export const addApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    //console.log(user_id);
-    const applicationInfo = req.body;
-    //console.log(applicationInfo);
-    const project_id = applicationInfo.project_id;
-    const role = applicationInfo.role;
     const applicant_name = await getApplicantName(user_id);
+    const { project_id, role } = req.body;
     const status = "Pending";
-    //console.log(project_id);
-    if ((await checkProjectOwner(user_id, project_id)) === true) {
+    if (await checkProjectOwner(user_id, project_id)) {
       res.status(401).json("You cannot apply to your own project");
-    } else if (
-      (await checkApplicationExists(user_id, project_id, role)) === true
-    ) {
+    } else if (await checkApplicationExists(user_id, project_id, role)) {
       res.status(401).json("You have already applied to this project");
     } else {
       await addApplication(user_id, status, project_id, role, applicant_name);
@@ -167,12 +160,11 @@ export const addApplicationService = async (req: any, res: any) => {
 export const deleteApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const info = req.body;
-    const project_id = info.project_id;
-    const role = info.role;
-    console.log("role:" + role);
-    console.log(project_id);
-    console.log(user_id);
+    const { project_id, role } = req.body;    
+    if (!(await checkApplicationExists(user_id, project_id, role))) {
+      res.status(401).json("You have not applied to this project");
+      return;
+    }
     await deleteApplication(user_id, project_id, role);
     res.status(200).json("Application deleted successfully");
   } catch (error) {
@@ -183,12 +175,11 @@ export const deleteApplicationService = async (req: any, res: any) => {
 export const editApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const info = req.body;
-    const project_id = info.project_id;
-    const role = info.role;
-    const newRole = info.newRole;
-    console.log(role);
-    console.log(newRole);
+    const { project_id, role, newRole } = req.body;
+    if(!(await checkApplicationExists(user_id, project_id, role))) {
+      res.status(401).json("You have not applied to this project");
+      return;
+    }
     await changeRole(user_id, project_id, role, newRole);
     res.status(200).json("Application edited successfully");
   } catch (error) {
