@@ -236,11 +236,9 @@ export const addApplication = async (
 ) => {
   try {
     const client = await pool.connect();
-    //check whether the application already exists
     if (await checkApplicationExistsById(user_id, project_id, role)) {
       throw new Error("Application already exists");
     }
-    //check whether the role exists in the project
     if (!(await checkRoleExists(project_id, role))) {
       throw new Error("Role does not exist in the project");
     }
@@ -292,35 +290,21 @@ export const checkApplicationExistsById = async (
   }
 };
 
-export const deleteApplication = async (
-  user_id: number,
-  project_id: number,
-  role_name: string
-) => {
-  //delete only if the application exists
-
+export const deleteApplication = async (application_id: number) => {
   try {
     const client = await pool.connect();
-    //check if the application exists
-    if (!(await checkApplicationExistsById(user_id, project_id, role_name))) {
-      throw new Error("Application does not exist");
-    } else {
-      const query = {
-        text: `
-        DELETE FROM project_applications
-        WHERE user_id = $1 AND project_id = $2 AND role_name = $3
-      `,
-        values: [user_id, project_id, role_name],
-      };
-      await client.query(query);
-      client.release();
-    }
+    const query = {
+      text: "DELETE FROM project_applications WHERE application_id = $1",
+      values: [application_id],
+    };
+    await client.query(query);
+    client.release();
   } catch (error: any) {
     console.error("Error deleting application in database:", error.message);
     throw new Error("Error deleting application in database");
   }
-};
-
+}
+  
 export const changeRole = async (
   user_id: number,
   project_id: number,
@@ -376,8 +360,6 @@ export const checkApplicationExists = async (
           WHERE user_id = $1 AND project_id = $2 AND role_name = $3
         )
       `,
-      //convert double quotes to single quotes for role
-
       values: [user_id, project_id, role],
     };
     const result = await client.query(query);
@@ -389,6 +371,53 @@ export const checkApplicationExists = async (
     throw new Error("Error checking application in database");
   }
 };
+
+export const checkApplicationIdExists = async (application_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+        SELECT EXISTS (
+          SELECT 1
+          FROM project_applications
+          WHERE application_id = $1
+        )
+      `,
+      values: [application_id],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0].exists;
+  } catch (error: any) {
+    console.error("Error checking application id in database:", error.message);
+    throw new Error("Error checking application id in database");
+  }
+}
+
+export const verifyApplicationOwner = async (
+  user_id: number,
+  application_id: number
+) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+        SELECT EXISTS (
+          SELECT 1
+          FROM project_applications
+          WHERE user_id = $1 AND application_id = $2
+        )
+      `,
+      values: [user_id, application_id],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0].exists;
+  } catch (error: any) {
+    console.error("Error verifying application owner in database:", error.message);
+    throw new Error("Error verifying application owner in database");
+  }
+}
 
 export const checkRoleExists = async (project_id: number, role: string) => {
   try {
