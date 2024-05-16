@@ -15,6 +15,8 @@ import {
   getApplicants,
   acceptApplicant,
   checkApplicationExists,
+  checkApplicationIdExists,
+  verifyApplicationOwner,
   getApplicantName,
 } from "../../DB/projectDbFunctions";
 
@@ -160,12 +162,16 @@ export const addApplicationService = async (req: any, res: any) => {
 export const deleteApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const { project_id, role } = req.body;    
-    if (!(await checkApplicationExists(user_id, project_id, role))) {
+    const { application_id } = req.body;    
+    if (!(await checkApplicationIdExists(application_id))) {
       res.status(401).json("You have not applied to this project");
       return;
     }
-    await deleteApplication(user_id, project_id, role);
+    if(!(await verifyApplicationOwner(user_id, application_id))) {
+      res.status(401).json("You are not authorized to delete this application");
+      return;
+    }
+    await deleteApplication(application_id);
     res.status(200).json("Application deleted successfully");
   } catch (error) {
     res.status(401).json("Error in deleteApplicationService");
