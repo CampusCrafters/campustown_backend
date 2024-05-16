@@ -3,6 +3,7 @@ import {
   getAllProjects,
   addProject,
   getMyProjects,
+  getProject,
   updateProject,
   updateProjectStatus,
   checkProjectOwner,
@@ -50,6 +51,16 @@ export const getMyProjectsService = async (req: any, res: any) => {
     res.status(401).json(err.message);
   }
 };
+
+export const getProjectService = async (req: any, res: any) => {
+  try {
+    const id = req.params.id.replace(":", ""); 
+    const project = await getProject(id);
+    res.status(200).json(project);
+  } catch (err: any) {
+    res.status(401).json(err.message);
+  }
+}
 
 export const editProjectService = async (req: any, res: any) => {
   try {
