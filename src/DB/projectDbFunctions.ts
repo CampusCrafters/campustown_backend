@@ -65,6 +65,22 @@ interface ProjectInfo {
   [key: string]: any;
 }
 
+export const getProject = async (project_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: "SELECT * FROM projects WHERE project_id = $1",
+      values: [project_id],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0];
+  } catch (err: any) {
+    console.error("Error getting project: ", err.message);
+    throw new Error("Error getting project");
+  }
+}
+
 export const updateProject = async (
   project_id: number,
   projectinfo: ProjectInfo
