@@ -194,7 +194,11 @@ export const editApplicationService = async (req: any, res: any) => {
     const { user_id } = await getUserProfile(req.decoded.email);
     const { project_id, role, newRole } = req.body;
     if(!(await checkApplicationExists(user_id, project_id, role))) {
-      res.status(401).json("You have not applied to this project");
+      res.status(401).json("There is an error in the application details provided, seems like you have not applied to this project yet.");
+      return;
+    }
+    if(role === newRole) {
+      res.status(401).json("You have already applied for this role");
       return;
     }
     await changeRole(user_id, project_id, role, newRole);
