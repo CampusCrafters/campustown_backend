@@ -11,6 +11,12 @@ export const viewProfileService = async (req: any, res: any) => {
 };
 
 export const profilePictureService = async (req: any, res: any) => {
+  if(req.method === "DELETE"){
+    const { user_id } = await getUserProfile(req.decoded.email);
+    await setProfilePicture(user_id, null);
+    res.status(200).json("Profile picture deleted successfully");
+    return;
+  }
   try {
     const { originalname, buffer, mimetype } = req.file;
     const { user_id } = await getUserProfile(req.decoded.email);
@@ -22,9 +28,6 @@ export const profilePictureService = async (req: any, res: any) => {
       const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
       await setProfilePicture(user_id, imageUrl);
       res.status(200).json({ imageUrl: imageUrl });
-    } else if (req.method === "DELETE") {
-      await setProfilePicture(user_id, null);
-      res.status(200).json("Profile picture deleted successfully");
     } else if (req.method === "GET") {
       const profilePicture = await getProfilePicture(user_id);
       res.status(200).json({ profilePicture: profilePicture });
