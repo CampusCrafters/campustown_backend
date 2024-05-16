@@ -4,7 +4,7 @@ export const getAllProjects = async () => {
   try {
     const client = await pool.connect();
     const query = {
-      text: "SELECT * FROM projects",
+      text: "SELECT projects.*, users.name FROM projects INNER JOIN users ON projects.host_id = users.user_id",
     };
     const result = await client.query(query);
     client.release();
@@ -380,7 +380,6 @@ export const checkApplicationExists = async (
     };
     const result = await client.query(query);
     client.release();
-    console.log(result.rows[0].exists);
     return result.rows[0].exists;
   } catch (error: any) {
     console.error("Error checking application in database:", error.message);
