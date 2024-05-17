@@ -5,7 +5,7 @@
 1. Clone the repository:
 
    ```
-   git clone -b main https://github.com/vijayvenkatj/CampusConnect_Backend.git
+   git clone -b main https://github.com/CampusCrafters/CampusConnect_Backend.git
    ```
 
 2. Install dependencies:
