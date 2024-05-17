@@ -34,6 +34,21 @@ export const getUserProfile = async (email: string) => {
   }
 };
 
+export const getUserProfileById = async (user_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = "SELECT * FROM users WHERE user_id = $1";
+    const values = [user_id];
+    const result = await client.query(query, values);
+    const user = result.rows[0];
+    client.release();
+    return user || `No user found with id ${user_id}`;
+  } catch (error) {
+    console.error("Error getting user profile from database:", error);
+    throw new Error("Error getting user profile from database");
+  }
+}
+
 export const setProfilePicture = async (
   user_id: number,
   imageUrl: string | null

@@ -4,7 +4,7 @@ export const getAllProjects = async () => {
   try {
     const client = await pool.connect();
     const query = {
-      text: "SELECT * FROM projects",
+      text: "SELECT projects.*, users.name, users.profile_picture FROM projects INNER JOIN users ON projects.host_id = users.user_id",
     };
     const result = await client.query(query);
     client.release();
@@ -63,6 +63,22 @@ export const getMyProjects = async (user_id: number) => {
 
 interface ProjectInfo {
   [key: string]: any;
+}
+
+export const getProject = async (project_id: number) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: "SELECT * FROM projects WHERE project_id = $1",
+      values: [project_id],
+    };
+    const result = await client.query(query);
+    client.release();
+    return result.rows[0];
+  } catch (err: any) {
+    console.error("Error getting project: ", err.message);
+    throw new Error("Error getting project");
+  }
 }
 
 export const updateProject = async (
@@ -364,7 +380,6 @@ export const checkApplicationExists = async (
     };
     const result = await client.query(query);
     client.release();
-    console.log(result.rows[0].exists);
     return result.rows[0].exists;
   } catch (error: any) {
     console.error("Error checking application in database:", error.message);
