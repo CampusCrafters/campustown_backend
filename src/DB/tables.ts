@@ -123,8 +123,11 @@ export const createProjectApplicationsTable = async (): Promise<void> => {
         user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
         applicant_name VARCHAR(255) NOT NULL, 
         project_id INTEGER REFERENCES projects(project_id) ON DELETE CASCADE,
-        role VARCHAR(255) NOT NULL, 
-        status VARCHAR(50) DEFAULT 'Pending' NOT NULL
+        role_name VARCHAR(255) NOT NULL, 
+        status VARCHAR(50) DEFAULT 'Pending' NOT NULL,
+        applied_on TIMESTAMP NOT NULL,
+        reviewed_on TIMESTAMP DEFAULT NULL
+
       )
     `;
     await pool.query(query);

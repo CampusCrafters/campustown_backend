@@ -1,7 +1,7 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, setProfilePicture, getProfilePicture, viewProfileResume, addProfileResume, deleteProfileResume } from "../../DB/userDbFunctions"; 
+import { getUserProfile, getUserProfileById, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, setProfilePicture, getProfilePicture, viewProfileResume, addProfileResume, deleteProfileResume } from "../../DB/userDbFunctions"; 
 import { uploadImgToS3 } from "../user/userHelper";
 
-export const viewProfileService = async (req: any, res: any) => {
+export const viewMyProfileService = async (req: any, res: any) => {
   try {
     const profileInfo = await getUserProfile(req.decoded.email);
     res.status(200).json(profileInfo);
@@ -10,7 +10,22 @@ export const viewProfileService = async (req: any, res: any) => {
   }
 };
 
+export const viewProfileService = async (req: any, res: any) => {
+  try {
+    const profileInfo = await getUserProfileById(req.params.user_id.replace(":", ""));
+    res.status(200).json(profileInfo);
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
+
 export const profilePictureService = async (req: any, res: any) => {
+  if(req.method === "DELETE"){
+    const { user_id } = await getUserProfile(req.decoded.email);
+    await setProfilePicture(user_id, null);
+    res.status(200).json("Profile picture deleted successfully");
+    return;
+  }
   try {
     const { originalname, buffer, mimetype } = req.file;
     const { user_id } = await getUserProfile(req.decoded.email);
@@ -22,9 +37,6 @@ export const profilePictureService = async (req: any, res: any) => {
       const imageUrl = await uploadImgToS3(originalname, buffer, mimetype);
       await setProfilePicture(user_id, imageUrl);
       res.status(200).json({ imageUrl: imageUrl });
-    } else if (req.method === "DELETE") {
-      await setProfilePicture(user_id, null);
-      res.status(200).json("Profile picture deleted successfully");
     } else if (req.method === "GET") {
       const profilePicture = await getProfilePicture(user_id);
       res.status(200).json({ profilePicture: profilePicture });
