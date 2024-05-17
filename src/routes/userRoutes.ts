@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import multer from "multer"; 
 import { authMiddleware } from "../middlewares/authMiddleware"; 
 import { signinService, getTokensAndStoreDataService, verifyTokenService } from "../service/auth/authService"; 
-import { viewProfileService, editProfileService, addProfileProjectService, viewProfileProjectService, editProfileProjectService, deleteProfileProjectService, viewExperienceService, addExperienceService, editExperienceService, deleteExperienceService, getMyApplicationsService, profilePictureService, addResumeService, viewResumeService, deleteResumeService } from "../service/user/userService";
+import { viewMyProfileService, viewProfileService, editProfileService, addProfileProjectService, viewProfileProjectService, editProfileProjectService, deleteProfileProjectService, viewExperienceService, addExperienceService, editExperienceService, deleteExperienceService, getMyApplicationsService, profilePictureService, addResumeService, viewResumeService, deleteResumeService } from "../service/user/userService";
 
 const router = Router(); router.use(bodyParser.json());
 const storage = multer.memoryStorage(); const upload = multer({ storage: storage });
@@ -13,7 +13,8 @@ router.post("/gsignin", signinService);
 router.get("/oauth", getTokensAndStoreDataService); 
 router.get("/verifyToken", verifyTokenService);
 
-router.get("/viewProfile", authMiddleware, viewProfileService); 
+router.get("/viewProfile", authMiddleware, viewMyProfileService); 
+router.get("/profile/:user_id", viewProfileService);
 router.put("/editProfile", authMiddleware, editProfileService); 
 router.post("/addProfilePicture", authMiddleware, upload.single("image"), profilePictureService); 
 router.put("/editProfilePicture", authMiddleware, upload.single("image"), profilePictureService); 

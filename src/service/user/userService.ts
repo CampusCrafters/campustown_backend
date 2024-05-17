@@ -1,7 +1,7 @@
-import { getUserProfile, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, setProfilePicture, getProfilePicture, viewProfileResume, addProfileResume, deleteProfileResume } from "../../DB/userDbFunctions"; 
+import { getUserProfile, getUserProfileById, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, setProfilePicture, getProfilePicture, viewProfileResume, addProfileResume, deleteProfileResume } from "../../DB/userDbFunctions"; 
 import { uploadImgToS3 } from "../user/userHelper";
 
-export const viewProfileService = async (req: any, res: any) => {
+export const viewMyProfileService = async (req: any, res: any) => {
   try {
     const profileInfo = await getUserProfile(req.decoded.email);
     res.status(200).json(profileInfo);
@@ -9,6 +9,15 @@ export const viewProfileService = async (req: any, res: any) => {
     res.status(401).json(error.message);
   }
 };
+
+export const viewProfileService = async (req: any, res: any) => {
+  try {
+    const profileInfo = await getUserProfileById(req.params.user_id.replace(":", ""));
+    res.status(200).json(profileInfo);
+  } catch (error: any) {
+    res.status(401).json(error.message);
+  }
+}
 
 export const profilePictureService = async (req: any, res: any) => {
   if(req.method === "DELETE"){
