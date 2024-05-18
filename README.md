@@ -23,7 +23,6 @@ To start the server, run:
 ```
 npm start
 ```
-## You can Automate all this using the Jenkins file!
 
 ## Connect to postgres DB using pgAdmin (any GUI tool)
 
