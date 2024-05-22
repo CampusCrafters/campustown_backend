@@ -1,23 +1,15 @@
-version: '3.3'
-
+version: '3.8'
 services:
-  db:
-    image: postgres:latest
+  frontend:
+    image: vijayvenkatj/campusconnect-frontend:1.0
     restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    restart: always
-    ports:
-      - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin_password
     depends_on:
-      - db
+      - backend
+    ports:
+      - "5173:5173"
+    
+  backend:
+    image: vijayvenkatj/campusconnect-backend:1.1
+    restart: always
+    ports:
+      - "5000:5000"
