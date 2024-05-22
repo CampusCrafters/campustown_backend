@@ -22,7 +22,6 @@
    npm start
    ```
 
-
 ## Setting up using Docker
 
 1. Install Docker Desktop from https://www.docker.com/products/docker-desktop/:
@@ -36,7 +35,6 @@
    ```
    docker compose up
    ```
-   
 
 ## Connect to postgres DB using pgAdmin (any GUI tool)
 
