@@ -16,13 +16,11 @@
 
 3. Create a `.env` file in the root folder and paste the necessary keys.
 
-## Usage
+4. To start the server, run:
 
-To start the server, run:
-
-```
-npm start
-```
+   ```
+   npm start
+   ```
 
 ## Setting up using Docker
 
