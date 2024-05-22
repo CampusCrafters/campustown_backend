@@ -1,5 +1,19 @@
 import { pool } from "./tables";
 
+export const getAllUsers = async () => {
+  try {
+    const client = await pool.connect();
+    const query = "SELECT user_id, profile_picture, name FROM users";
+    const result = await client.query(query);
+    const users = result.rows;
+    client.release();
+    return users;
+  } catch (error) {
+    console.error("Error getting all users from database:", error);
+    throw new Error("Error getting all users from database");
+  }
+}
+
 export const addUser = async (
   name: string,
   email: string,
