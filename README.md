@@ -24,6 +24,20 @@ To start the server, run:
 npm start
 ```
 
+## Setting up using Docker
+
+1. Install Docker Desktop from https://www.docker.com/products/docker-desktop/:
+
+2. Clone the repository:
+
+   ```
+   git clone -b main https://github.com/CampusCrafters/CampusConnect_Backend.git
+   ```
+3. Enter the command (enter the root folder):
+   ```
+   docker compose up
+   ```
+
 ## Connect to postgres DB using pgAdmin (any GUI tool)
 
 Install pgAdmin for desktop
