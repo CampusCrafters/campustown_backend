@@ -70,8 +70,8 @@ export const editProjectService = async (req: any, res: any) => {
       res.status(401).json("You are not authorized to edit this project");
       return;
     }
-    const projectInfo = req.body;
-    await updateProject(project_id, projectInfo);
+    const updatedProjectInfo = req.body;
+    await updateProject(project_id, updatedProjectInfo);
     res.status(200).json("Project updated successfully");
   } catch (err: any) {
     res.status(401).json(err.message);
