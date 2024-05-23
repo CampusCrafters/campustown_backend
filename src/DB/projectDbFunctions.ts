@@ -24,7 +24,7 @@ export const addProject = async (user_id: number, projectInfo: any) => {
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
       values: [
         user_id,
-        JSON.stringify(projectInfo.members), // Stringify the members array
+        JSON.stringify(projectInfo.members), 
         projectInfo.project_title,
         projectInfo.description,
         projectInfo.domain,
@@ -33,7 +33,7 @@ export const addProject = async (user_id: number, projectInfo: any) => {
         projectInfo.start_date,
         projectInfo.end_date,
         projectInfo.status,
-        new Date().toISOString(), // Get the current date and time
+        new Date().toISOString(), 
       ],
     };
 
@@ -89,7 +89,7 @@ export const updateProject = async (project_id: number, projectInfo: any) => {
         "UPDATE projects SET members = $1, project_title = $2, description = $3, domain = $4, link = $5, required_roles = $6, start_date = $7, end_date = $8, status = $9, posted_on = $10 " +
         "WHERE project_id = $11",
       values: [
-        JSON.stringify(projectInfo.members), // Stringify the members array
+        JSON.stringify(projectInfo.members), 
         projectInfo.project_title,
         projectInfo.description,
         projectInfo.domain,
@@ -98,7 +98,7 @@ export const updateProject = async (project_id: number, projectInfo: any) => {
         projectInfo.start_date,
         projectInfo.end_date,
         projectInfo.status,
-        new Date().toISOString(), // Get the current date and time
+        new Date().toISOString(), 
         project_id,
       ],
     };
