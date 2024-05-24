@@ -54,19 +54,19 @@ export const getMyProjectsService = async (req: any, res: any) => {
 
 export const getProjectService = async (req: any, res: any) => {
   try {
-    const id = req.params.id.replace(":", ""); 
+    const id = req.params.id.replace(":", "");
     const project = await getProject(id);
     res.status(200).json(project);
   } catch (err: any) {
     res.status(401).json(err.message);
   }
-}
+};
 
 export const editProjectService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const project_id = req.query.project_id;
-    if ((await checkProjectOwner(user_id, project_id)) === false) {
+    if ((await checkProjectOwner(user_id, project_id)) == false) {
       res.status(401).json("You are not authorized to edit this project");
       return;
     }
@@ -173,12 +173,12 @@ export const addApplicationService = async (req: any, res: any) => {
 export const deleteApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const { application_id } = req.body;    
+    const { application_id } = req.body;
     if (!(await checkApplicationIdExists(application_id))) {
       res.status(401).json("You have not applied to this project");
       return;
     }
-    if(!(await verifyApplicationOwner(user_id, application_id))) {
+    if (!(await verifyApplicationOwner(user_id, application_id))) {
       res.status(401).json("You are not authorized to delete this application");
       return;
     }
@@ -193,11 +193,15 @@ export const editApplicationService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const { project_id, role, newRole } = req.body;
-    if(!(await checkApplicationExists(user_id, project_id, role))) {
-      res.status(401).json("There is an error in the application details provided, seems like you have not applied to this project yet.");
+    if (!(await checkApplicationExists(user_id, project_id, role))) {
+      res
+        .status(401)
+        .json(
+          "There is an error in the application details provided, seems like you have not applied to this project yet."
+        );
       return;
     }
-    if(role === newRole) {
+    if (role === newRole) {
       res.status(401).json("You have already applied for this role");
       return;
     }
