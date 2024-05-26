@@ -20,11 +20,10 @@ export const addProject = async (user_id: number, projectInfo: any) => {
     const client = await pool.connect();
     const query = {
       text:
-        "INSERT INTO projects (host_id, members, project_title, description, domain, link, required_roles, start_date, end_date, status, posted_on)" +
-        "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+        "INSERT INTO projects (host_id, project_title, description, domain, link, required_roles, start_date, end_date, status, posted_on)" +
+        "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
       values: [
         user_id,
-        JSON.stringify(projectInfo.members), 
         projectInfo.project_title,
         projectInfo.description,
         projectInfo.domain,
