@@ -1,14 +1,19 @@
 import { OAuth2Client } from "google-auth-library";
-import { getUserInfoFromGoogle, generateJWT, storeUserData, verifyJWT } from "./authHelper";
+import {
+  getUserInfoFromGoogle,
+  generateJWT,
+  storeUserData,
+  verifyJWT,
+} from "./authHelper";
 
 const backendURL = process.env.BACKEND_URL;
 const frontendURL = process.env.FRONTEND_URL;
 const redirectURL = `${backendURL}/api/v1/user/oauth`;
 const oAuth2Client = new OAuth2Client(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    redirectURL
-  );
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  redirectURL
+);
 
 export const signinService = async (req: any, res: any) => {
   res.header("Access-Control-Allow-Credentials", "true");
@@ -26,6 +31,10 @@ export const signinService = async (req: any, res: any) => {
 
 export const getTokensAndStoreDataService = async (req: any, res: any) => {
   const code = req.query.code;
+  if (!code) {
+    console.error("Code not found");
+    return res.redirect(`${frontendURL}/login`);
+  }
   try {
     const r = await oAuth2Client.getToken(code); // Get token
     await oAuth2Client.setCredentials(r.tokens); // Set credentials
@@ -58,8 +67,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         console.error("Error setting cookie:", error);
         res.status(500).send("Error setting cookie");
       }
-      res.redirect(`${frontendURL}/projects`); // Redirect after setting the cookie // Redirect to dashboard 
-      
+      res.redirect(`${frontendURL}/projects`); // Redirect after setting the cookie // Redirect to dashboard
     } else {
       console.error("Access token not found");
       return res.status(500).send("Access token not found");
@@ -81,7 +89,7 @@ export const verifyTokenService = async (req: any, res: any) => {
     const decoded = await verifyJWT(token);
     if (decoded) {
       res.status(200).json({ decoded: decoded });
-    } 
+    }
   } catch (error) {
     res.status(500).json({ "Error in verify token service": error });
   }

@@ -32,7 +32,7 @@ export const addProject = async (user_id: number, projectInfo: any) => {
         projectInfo.start_date,
         projectInfo.end_date,
         projectInfo.status,
-        new Date().toISOString(), 
+        new Date().toISOString(),
       ],
     };
 
@@ -78,26 +78,38 @@ export const getProject = async (project_id: number) => {
     console.error("Error getting project: ", err.message);
     throw new Error("Error getting project");
   }
-}
+};
 
 export const updateProject = async (project_id: number, projectInfo: any) => {
+  console.log("projectInfo", projectInfo);
   try {
+    // Access nested projectInfo
+    const {
+      project_title,
+      description,
+      domain,
+      link,
+      required_roles,
+      start_date,
+      end_date,
+      status,
+    } = projectInfo.projectInfo;
+
     const client = await pool.connect();
     const query = {
       text:
-        "UPDATE projects SET members = $1, project_title = $2, description = $3, domain = $4, link = $5, required_roles = $6, start_date = $7, end_date = $8, status = $9, posted_on = $10 " +
-        "WHERE project_id = $11",
+        "UPDATE projects SET project_title = $1, description = $2, domain = $3, link = $4, required_roles = $5, start_date = $6, end_date = $7, status = $8, posted_on = $9 " +
+        "WHERE project_id = $10",
       values: [
-        JSON.stringify(projectInfo.members), 
-        projectInfo.project_title,
-        projectInfo.description,
-        projectInfo.domain,
-        projectInfo.link,
-        projectInfo.required_roles,
-        projectInfo.start_date,
-        projectInfo.end_date,
-        projectInfo.status,
-        new Date().toISOString(), 
+        project_title || "",
+        description || "",
+        domain || "",
+        link || "",
+        required_roles || [],
+        start_date,
+        end_date,
+        status || "",
+        new Date().toISOString(),
         project_id,
       ],
     };
@@ -106,7 +118,7 @@ export const updateProject = async (project_id: number, projectInfo: any) => {
     client.release();
   } catch (err: any) {
     console.error("Error updating project: ", err.message);
-    throw new Error("Error updating project");
+    throw new Error("Error updating project: " + err.message);
   }
 };
 
@@ -322,8 +334,8 @@ export const deleteApplication = async (application_id: number) => {
     console.error("Error deleting application in database:", error.message);
     throw new Error("Error deleting application in database");
   }
-}
-  
+};
+
 export const changeRole = async (
   user_id: number,
   project_id: number,
@@ -410,7 +422,7 @@ export const checkApplicationIdExists = async (application_id: number) => {
     console.error("Error checking application id in database:", error.message);
     throw new Error("Error checking application id in database");
   }
-}
+};
 
 export const verifyApplicationOwner = async (
   user_id: number,
@@ -432,10 +444,13 @@ export const verifyApplicationOwner = async (
     client.release();
     return result.rows[0].exists;
   } catch (error: any) {
-    console.error("Error verifying application owner in database:", error.message);
+    console.error(
+      "Error verifying application owner in database:",
+      error.message
+    );
     throw new Error("Error verifying application owner in database");
   }
-}
+};
 
 export const checkRoleExists = async (project_id: number, role: string) => {
   try {
