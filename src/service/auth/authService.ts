@@ -26,6 +26,10 @@ export const signinService = async (req: any, res: any) => {
 
 export const getTokensAndStoreDataService = async (req: any, res: any) => {
   const code = req.query.code;
+  if (!code) {
+    console.error("Code not found");
+    return res.redirect(`${frontendURL}/login`);
+  }
   try {
     const r = await oAuth2Client.getToken(code); // Get token
     await oAuth2Client.setCredentials(r.tokens); // Set credentials
