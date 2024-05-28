@@ -31,11 +31,16 @@
    ```
    git clone -b main https://github.com/CampusCrafters/CampusConnect_Backend.git
    ```
-3. Enter the command (enter the root folder):
+3. Enter the following commands (enter the root folder):
+   
+   Pulls the latest version of the image
+   ```
+   docker compose pull
+   ```
+   Starts the server
    ```
    docker compose up
    ```
-
 ## Connect to postgres DB using pgAdmin (any GUI tool)
 
 Install pgAdmin for desktop
