@@ -12,7 +12,7 @@ const corsOptions = {
     "http://localhost:5173",  
     "https://campus-connect-frontend-xi.vercel.app",  
     "https://campusconnect-frontend.onrender.com",
-    "ec2-13-233-31-62.ap-south-1.compute.amazonaws.com:5173"
+    "http://ec2-13-233-31-62.ap-south-1.compute.amazonaws.com:5173"
   ],
   credentials: true
 };
