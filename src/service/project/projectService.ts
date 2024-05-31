@@ -115,7 +115,7 @@ export const editProjectStatusService = async (req: any, res: any) => {
 export const shortlistApplicantService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const project_id = req.query.project_id;
+    const { project_id, role_name } = req.body;
     if ((await checkProjectOwner(user_id, project_id)) === false) {
       res
         .status(401)
@@ -124,8 +124,8 @@ export const shortlistApplicantService = async (req: any, res: any) => {
         );
       return;
     }
-    const applicant_id = req.query.applicant_id; // user_id of the applicant from the Project Applications table.
-    const role_name = req.query.role_name;
+    const applicant_id = req.body.user_id; // user_id of the applicant from the Project Applications table.
+
     await shortlistApplicant(project_id, role_name, applicant_id);
     res.status(200).json("Applicant shortlisted successfully");
   } catch (err: any) {
@@ -136,16 +136,18 @@ export const shortlistApplicantService = async (req: any, res: any) => {
 export const rejectApplicantService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const project_id = req.query.project_id;
-    if (await checkProjectOwner(user_id, project_id)) {
+    const applicantInfo = req.body;
+    const project_id = applicantInfo.project_id;
+    console.log(user_id, project_id, applicantInfo);
+    if ((await checkProjectOwner(user_id, project_id)) === false) {
       res
         .status(401)
         .json("You are not authorized to reject applicants for this project");
       return;
     }
-    const applicant_id = req.query.applicant_id;
-    const role_name = req.query.role_name;
-    await rejectApplicant(project_id, applicant_id, role_name);
+    const applicant_id = applicantInfo.user_id;
+    const role_name = applicantInfo.role_name;
+    await rejectApplicant(project_id, role_name, applicant_id);
     res.status(200).json("Applicant rejected successfully");
   } catch (err: any) {
     res.status(401).json(err.message);
@@ -234,9 +236,8 @@ export const getApplicantsService = async (req: any, res: any) => {
 export const acceptApplicantService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
-    const project_id = req.query.project_id;
-    const applicant_id = req.query.applicant_id;
-    const role_name = req.query.role_name;
+    const { project_id, role_name } = req.body;
+    const applicant_id = req.body.user_id;
     if ((await checkProjectOwner(user_id, project_id)) === false) {
       res.status(401).json("You are not authorized to accept this applicant");
       return;

@@ -185,14 +185,15 @@ export const acceptApplicant = async (
     const updateProjectApplicationsTable = {
       text: `
         UPDATE project_applications 
-        SET status = 'Accepted' AND reviewed_on = $4
+        SET status = $4, reviewed_on = $5
         WHERE project_id = $1 AND user_id = $2 AND role_name = $3
       `,
       values: [
         project_id,
         applicant_id,
         role_name,
-        new Date().toLocaleString(),
+        "Accepted", // Assuming status is of type string
+        new Date().toISOString(),
       ],
     };
     await client.query(updateProjectApplicationsTable);
@@ -213,14 +214,15 @@ export const shortlistApplicant = async (
     const updateProjectApplicationsTable = {
       text: `
         UPDATE project_applications 
-        SET status = 'Shortlisted' AND reviewed_on = $4
+        SET status = $4, reviewed_on = $5
         WHERE project_id = $1 AND user_id = $2 AND role_name = $3
       `,
       values: [
         project_id,
         applicant_id,
         role_name,
-        new Date().toLocaleString(),
+        "Shortlisted",
+        new Date().toISOString(), // Using toISOString() for standard datetime format
       ],
     };
     await client.query(updateProjectApplicationsTable);
@@ -236,19 +238,21 @@ export const rejectApplicant = async (
   role_name: string,
   applicant_id: number
 ) => {
+  console.log(project_id, role_name, applicant_id);
   try {
     const client = await pool.connect();
     const updateProjectApplicationsTable = {
       text: `
         UPDATE project_applications 
-        SET status = 'Rejected' AND reviewed_on = $4
+        SET status = $4, reviewed_on = $5
         WHERE project_id = $1 AND user_id = $2 AND role_name = $3
       `,
       values: [
         project_id,
         applicant_id,
         role_name,
-        new Date().toLocaleString(),
+        "Rejected",
+        new Date().toISOString(), // Use ISO string format for the date
       ],
     };
     await client.query(updateProjectApplicationsTable);

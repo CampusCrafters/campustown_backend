@@ -1,11 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
+import "dotenv/config";
+import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
+import rootRouter from "./routes/index";
+import cookieParser from "cookie-parser";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
-// CORS options
 const corsOptions = {
   origin: [
     "http://localhost:5173",
@@ -15,32 +16,22 @@ const corsOptions = {
   ],
   credentials: true,
 };
-app.options("*", cors(corsOptions));
 
-// Middleware
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 
-// Logging middleware to log request origin
-app.use((req: any, res: any, next: any) => {
-  console.log("Request Origin:", req.headers.origin);
-  next();
-});
-
-// Routes
-app.get("/", (req: any, res: any) => {
+app.use("/api/v1", rootRouter);
+app.get("/", (req: Request, res: Response) => {
   res.send(
     "<h1>Hello, you are in the root path of campus connect backend</h1>"
   );
 });
-
-app.get("/health", (req: any, res: any) => {
+app.get("/health", (req: Request, res: Response) => {
   res.status(200).json(`Server healthy on port ${PORT}.`);
   console.log(`Server healthy on port ${PORT}.`);
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
