@@ -137,7 +137,7 @@ export const rejectApplicantService = async (req: any, res: any) => {
   try {
     const { user_id } = await getUserProfile(req.decoded.email);
     const project_id = req.query.project_id;
-    if ((await checkProjectOwner(user_id, project_id)) === false) {
+    if (await checkProjectOwner(user_id, project_id)) {
       res
         .status(401)
         .json("You are not authorized to reject applicants for this project");
@@ -216,7 +216,15 @@ export const editApplicationService = async (req: any, res: any) => {
 export const getApplicantsService = async (req: any, res: any) => {
   try {
     const project_id = req.query.project_id;
-    const applicants = await getApplicants(project_id);
+    // Convert project_id to integer
+    const projectIdNumber = parseInt(project_id as string, 10);
+
+    // Check if the conversion is successful
+    if (isNaN(projectIdNumber)) {
+      throw new Error(`Invalid project_id: ${project_id}`);
+    }
+    console.log("project_id", projectIdNumber);
+    const applicants = await getApplicants(projectIdNumber);
     res.status(200).json(applicants);
   } catch (error) {
     res.status(401).json("Error in getApplicantsService");

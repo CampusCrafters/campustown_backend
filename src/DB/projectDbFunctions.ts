@@ -65,6 +65,7 @@ interface ProjectInfo {
 }
 
 export const getProject = async (project_id: number) => {
+  console.log("getProject");
   try {
     const client = await pool.connect();
     const query = {
@@ -361,6 +362,7 @@ export const changeRole = async (
 };
 
 export const getApplicants = async (project_id: number) => {
+  console.log("Type of project_id:", typeof project_id, "Value:", project_id);
   try {
     const client = await pool.connect();
     const query = {
