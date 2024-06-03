@@ -10,6 +10,7 @@ const PORT = process.env.PORT;
 const corsOptions = {
   origin: [
     "http://localhost:5173",
+    "http://localhost",
     "https://campus-connect-frontend-xi.vercel.app",
     "https://campusconnect-frontend.onrender.com",
     "http://ec2-13-233-31-62.ap-south-1.compute.amazonaws.com:5173",
