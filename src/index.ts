@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import rootRouter from "./routes/index";
 import cookieParser from "cookie-parser";
@@ -11,9 +11,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
     "http://localhost",
-    "https://campus-connect-frontend-xi.vercel.app",
-    "https://campusconnect-frontend.onrender.com",
-    "http://ec2-13-233-31-62.ap-south-1.compute.amazonaws.com:5173",
+    "https://campustown.in"
   ],
   credentials: true,
 };
