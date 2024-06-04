@@ -6,19 +6,9 @@ services:
     depends_on:
       - backend
     ports:
-      - "5173:5173"
-    networks:
-      - mynetwork
-    
+      - "5173:5173"    
   backend:
     image: vijayvenkatj/campusconnect-backend:latest
     restart: always
     ports:
       - "5000:5000"
-    networks:
-      - mynetwork
-
-networks:
-  mynetwork:
-    driver: bridge
-
