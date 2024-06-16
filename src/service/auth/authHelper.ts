@@ -1,13 +1,13 @@
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import { addUser, checkEmailExists } from "../../DB/userDbFunctions";
+import { addUser, checkEmailExists } from "../../repositories/userDbFunctions";
 import {
   createUsersTable,
   createUserProjectsTable,
   createUserExperienceTable,
   createProjectsTable,
   createProjectApplicationsTable,
-} from "../../DB/tables";
+} from "../../repositories/tables";
 
 export const getUserInfoFromGoogle = async (access_token: string) => {
   const response = await axios.post(

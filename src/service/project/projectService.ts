@@ -1,4 +1,4 @@
-import { getUserProfile } from "../../DB/userDbFunctions";
+import { getUserProfile } from "../../repositories/userDbFunctions";
 import {
   getAllProjects,
   addProject,
@@ -19,7 +19,7 @@ import {
   checkApplicationIdExists,
   verifyApplicationOwner,
   getApplicantName,
-} from "../../DB/projectDbFunctions";
+} from "../../repositories/projectDbFunctions";
 
 export const postProjectService = async (req: any, res: any) => {
   try {

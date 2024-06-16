@@ -1,4 +1,4 @@
-import { getAllUsers, getUserProfile, getUserProfileById, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, setProfilePicture, getProfilePicture, viewProfileResume, addProfileResume, deleteProfileResume } from "../../DB/userDbFunctions"; 
+import { getAllUsers, getUserProfile, getUserProfileById, updateUserProfile, addProfileProject, editProfileProject, getProfileProject, checkProfileProjectOwner, deleteProfileProject, getProfileExperience, addProfileExperience, checkProfileExperienceOwner, editProfileExperience, deleteProfileExperience, getMyApplications, setProfilePicture, getProfilePicture, viewProfileResume, addProfileResume, deleteProfileResume } from "../../repositories/userDbFunctions"; 
 import { uploadImgToS3 } from "../user/userHelper";
 
 export const getAllUsersService = async (req: any, res: any) => {
