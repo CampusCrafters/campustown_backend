@@ -4,7 +4,6 @@ import cors from "cors";
 import rootRouter from "./routes/index";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
-import { Client } from "pg";
 
 const { PORT, DATABASE_URL } = process.env;
 if (!PORT || !DATABASE_URL) {
@@ -12,16 +11,11 @@ if (!PORT || !DATABASE_URL) {
   process.exit(1);
 }
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
 const corsOptions = {
   origin: ["http://localhost:5173", "https://campustown.in"],
   credentials: true,
 };
+
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
@@ -47,16 +41,9 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 const startServer = async () => {
-  try {
-    await client.connect();
-    console.log("Connected to database");
-
-    app.listen(PORT, () => {
-      console.log(`Server listening on port ${PORT}`);
-    });
-  } catch (err: any) {
-    console.error("Error connecting to database", err.message);
-  }
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
 };
 
 startServer();

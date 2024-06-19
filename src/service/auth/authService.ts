@@ -94,3 +94,18 @@ export const verifyTokenService = async (req: any, res: any) => {
     res.status(500).json({ "Error in verify token service": error });
   }
 };
+
+export const verifyTokenForChatService = async (req: any, res: any) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ error: "No token provided" });
+  }
+  try {
+    const decoded = await verifyJWT(token);
+    if (decoded) {
+      res.status(200).json({ decoded: decoded });
+    }
+  } catch (error: any) {
+    res.status(500).json({ "Error in verify token for chat service": error.message });
+  }
+}
