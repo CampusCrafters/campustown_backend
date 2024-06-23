@@ -32,7 +32,7 @@ app.use(apiLimiter);
 app.use("/api/v1", rootRouter);
 app.get("/", (req: Request, res: Response) => {
   res.send(
-    "<h1>Hello, you are in the root path of campus connect backend!</h1>"
+    "<h1>Hello, you are in the root path of campus connect backend😀</h1>"
   );
 });
 app.get("/health", (req: Request, res: Response) => {
