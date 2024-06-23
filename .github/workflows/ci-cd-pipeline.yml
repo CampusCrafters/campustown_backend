@@ -20,9 +20,6 @@ jobs:
       - name: Install Dependencies 
         run: npm install
 
-      - name: Run Build
-        run: npm run build
-
       - name: Deploy to AWS EC2
         env:
           PEM_KEY: ${{ secrets.AWS_EC2_PEM_KEY }}
