@@ -41,9 +41,7 @@ jobs:
 
             # Commands to run on the EC2 instance
             cd ~/workspace/backend
-            git pull origin main
+            git pull 
             npm install
-            npm run build
-            npm run pm2
             pm2 restart all
           ENDSSH
