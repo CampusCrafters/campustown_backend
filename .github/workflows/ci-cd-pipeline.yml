@@ -37,7 +37,7 @@ jobs:
             export PATH=/home/$USERNAME/.nvm/versions/node/v21.6.1/bin:$PATH
 
             # Commands to run on the EC2 instance
-            cd ~/workspace/backend
+            cd ~/campustown/campustown_backend
             git pull 
             npm install
             pm2 restart all
