@@ -23,8 +23,8 @@ jobs:
       - name: Deploy to AWS EC2
         env:
           PEM_KEY: ${{ secrets.AWS_EC2_PEM_KEY }}
-          HOST: ${{ secrets.AWS_HOST }}
-          USERNAME: ${{ secrets.AWS_USERNAME }}
+          HOST: ${{ secrets.AWS_EC2_HOST }}
+          USERNAME: ${{ secrets.AWS_EC2_USERNAME }}
         run: |
           # Install PEM key
           mkdir -p ~/.ssh
