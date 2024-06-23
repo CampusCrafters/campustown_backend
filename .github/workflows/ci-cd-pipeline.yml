@@ -1,0 +1,49 @@
+name: Build and Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.10.0'
+
+      - name: Install Dependencies 
+        run: npm install
+
+      - name: Run Build
+        run: npm run build
+
+      - name: Deploy to AWS EC2
+        env:
+          PEM_KEY: ${{ secrets.AWS_EC2_PEM_KEY }}
+          HOST: ${{ secrets.AWS_HOST }}
+          USERNAME: ${{ secrets.AWS_USERNAME }}
+        run: |
+          # Install PEM key
+          mkdir -p ~/.ssh
+          echo "$PEM_KEY" > ~/.ssh/deploy_key.pem
+          chmod 700 ~/.ssh/deploy_key.pem
+          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+          # SSH into the EC2 instance and execute commands
+          ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no $USERNAME@$HOST << 'ENDSSH'
+            export PATH=/home/$USERNAME/.nvm/versions/node/v21.6.1/bin:$PATH
+
+            # Commands to run on the EC2 instance
+            cd ~/workspace/backend
+            git pull origin main
+            npm install
+            npm run build
+            npm run pm2
+            pm2 restart all
+          ENDSSH
