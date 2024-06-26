@@ -43,7 +43,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
     if (r.tokens && r.tokens.access_token) {
       const userInfo = await getUserInfoFromGoogle(r.tokens.access_token);
       const email = userInfo.email;
-      if (!email.endsWith("@iiitkottayam.ac.in")) {
+      if (!email.endsWith("@iiitkottayam.ac.in") && !email.endsWith("@student.nitw.ac.in")) {
         console.log("Unauthorized email domain");
         return res.redirect(`${frontendURL}/login?error=unauthorized`);
       }
