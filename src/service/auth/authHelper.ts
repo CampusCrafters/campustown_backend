@@ -63,7 +63,7 @@ export const storeUserData = async (userInfo: any) => {
       const [rollNumber, year, Branch] = await generateRollNumber(Email);
       let name = userInfo.name;
       if (Email.endsWith("@student.nitw.ac.in")) {
-        name = userInfo.name;
+        name = userInfo.name.split("_")[1].toUpperCase() + " " + "-NITW"
       } else if (Email.endsWith("@iiitkottayam.ac.in")) {
         name = `${userInfo.name.replace(/ -IIITK$/, "").replace(/"/g, "")}`;
       }
@@ -110,15 +110,13 @@ export const generateRollNumber = async (email: string) => {
       throw new Error("Invalid email format");
     }
     const username = parts[0];
-    const rollNumberMatch = username.match(
-      /\d{2}[a-zA-Z]{3}\d{2}[a-zA-Z]{1}\d{2}/
-    );
+    const rollNumberMatch = username.match(/\d{2}[a-zA-Z]{3}\d+[a-zA-Z]{0,2}\d+/);
     if (!rollNumberMatch) {
       throw new Error("Roll number not found in username");
     }
     const rollNumber = rollNumberMatch[0];
     const yearMatch = rollNumber.match(/^\d{2}/);
-    const branchMatch = rollNumber.match(/\d{2}([a-zA-Z]{3})/);
+    const branchMatch = rollNumber.match(/^\d{2}([a-zA-Z]{3})/);
     const year = yearMatch ? `20${yearMatch[0]}` : "";
     const branch = branchMatch ? branchMatch[1].toUpperCase() : "";
     return [rollNumber, year, branch];
