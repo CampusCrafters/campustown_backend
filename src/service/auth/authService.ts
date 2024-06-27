@@ -5,6 +5,7 @@ import {
   storeUserData,
   verifyJWT,
 } from "./authHelper";
+import { checkEmailExists } from "../../repositories/userDbFunctions";
 
 const backendURL = process.env.BACKEND_URL;
 const frontendURL = process.env.FRONTEND_URL;
@@ -14,6 +15,8 @@ const oAuth2Client = new OAuth2Client(
   process.env.CLIENT_SECRET,
   redirectURL
 );
+
+const allowedDomains = ["@iiitkottayam.ac.in", "@student.nitw.ac.in"];
 
 export const signinService = async (req: any, res: any) => {
   res.header("Access-Control-Allow-Credentials", "true");
@@ -43,12 +46,19 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
     if (r.tokens && r.tokens.access_token) {
       const userInfo = await getUserInfoFromGoogle(r.tokens.access_token);
       const email = userInfo.email;
-      if (!email.endsWith("@iiitkottayam.ac.in") && !email.endsWith("@student.nitw.ac.in")) {
-        console.log("Unauthorized email domain");
-        return res.redirect(`${frontendURL}/login?error=unauthorized`);
+      if (email) {
+        const isAllowedDomain = allowedDomains.some((allowedDomain) =>
+          email.endsWith(allowedDomain)
+        );
+        if (!isAllowedDomain) {
+          console.error("Email domain is not allowed");
+          return res.redirect(`${frontendURL}/login?error=unauthorized`);
+        }
       }
       try {
-        await storeUserData(userInfo);
+        if (!await checkEmailExists(email)) {
+          await storeUserData(userInfo);
+        }
       } catch (error: any) {
         console.log("Error storing user data:", error);
         return res.status(500).json(error.message);
