@@ -68,13 +68,73 @@ export const getProject = async (project_id: number) => {
   console.log("getProject");
   try {
     const client = await pool.connect();
-    const query = {
-      text: "SELECT * FROM projects WHERE project_id = $1",
+
+    // Fetch project details along with host details
+    const projectQuery = {
+      text: `
+        SELECT 
+          p.project_id, 
+          p.host_id,
+          p.project_title,
+          p.domain,
+          p.description,
+          p.link,
+          p.required_roles,
+          p.posted_on,
+          p.start_date,
+          p.end_date,
+          p.status,
+          p.edited_on,
+          p.members,
+          u.name as host_name,
+          u.profile_picture as host_profile_picture,
+          u.batch as host_batch
+        FROM projects p
+        JOIN users u ON p.host_id = u.user_id
+        WHERE p.project_id = $1
+      `,
       values: [project_id],
     };
-    const result = await client.query(query);
+
+    const projectResult = await client.query(projectQuery);
+    const project = projectResult.rows[0];
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    // Fetch member details
+    const members = await Promise.all(
+      project.members.map(async (member: any) => {
+        const memberQuery = {
+          text: `
+            SELECT 
+              user_id,
+              name,
+              profile_picture,
+              batch
+            FROM users
+            WHERE user_id = $1
+          `,
+          values: [member.user_id],
+        };
+
+        const memberResult = await client.query(memberQuery);
+        const memberDetails = memberResult.rows[0];
+
+        return {
+          ...member,
+          ...memberDetails,
+        };
+      })
+    );
+
     client.release();
-    return result.rows[0];
+
+    return {
+      ...project,
+      members,
+    };
   } catch (err: any) {
     console.error("Error getting project: ", err.message);
     throw new Error("Error getting project");
