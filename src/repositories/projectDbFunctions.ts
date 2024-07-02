@@ -278,9 +278,7 @@ export const addApplication = async (
     if (!(await checkRoleExists(project_id, role))) {
       throw new Error("Role does not exist in the project");
     }
-    if (await checkApplicantAlreadyMember(user_id, project_id, role)) {
-      throw new Error("Applicant is already a member of the project");
-    }
+
     const query = {
       text: `
         INSERT INTO project_applications (user_id, applicant_name, project_id, role_name, status, applied_on)
