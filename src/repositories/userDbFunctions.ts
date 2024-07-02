@@ -19,19 +19,45 @@ export const addUser = async (
   email: string,
   rollnumber: string,
   batch: number,
-  branch: string
+  branch: string,
+  user_type: string // Added user_type parameter
 ): Promise<void> => {
+  let client;
   try {
-    const client = await pool.connect();
-    const query = `INSERT INTO users (name, email, rollnumber, batch, branch) VALUES ($1, $2, $3, $4, $5)`;
-    const values = [name, email, rollnumber, batch, branch];
+    client = await pool.connect();
+    const query = `INSERT INTO users (name, email, rollnumber, batch, branch, user_type) VALUES ($1, $2, $3, $4, $5, $6)`;
+    const values = [name, email, rollnumber, batch, branch, user_type]; // Include user_type in values array
     await client.query(query, values);
-    client.release();
   } catch (error) {
     console.error("Error adding user to database:", error);
     throw new Error("Error adding user to database");
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 };
+
+export const addFaculty = async (
+  name: string,
+  email: string,
+  user_type: string // Added user_type parameter
+): Promise<void> => {
+  let client;
+  try {
+    client = await pool.connect();
+    const query = `INSERT INTO users (name, email, user_type) VALUES ($1, $2, $3)`;
+    const values = [name, email, user_type]; // Include user_type in values array
+    await client.query(query, values);
+  } catch (error) {
+    console.error("Error adding user to database:", error);
+    throw new Error("Error adding user to database");
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+}
 
 export const getUserProfile = async (email: string) => {
   try {

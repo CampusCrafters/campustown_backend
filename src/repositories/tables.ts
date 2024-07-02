@@ -13,9 +13,9 @@ export async function createUsersTable(): Promise<void> {
         resume BYTEA DEFAULT NULL,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
-        rollnumber VARCHAR(20) NOT NULL UNIQUE,
-        batch INTEGER NOT NULL,
-        branch VARCHAR(255) NOT NULL,
+        rollnumber VARCHAR(20) UNIQUE,
+        batch INTEGER,
+        branch VARCHAR(255),
         dob DATE,
         location VARCHAR(255),
         pers_email VARCHAR(255),
@@ -25,7 +25,8 @@ export async function createUsersTable(): Promise<void> {
         linkedin VARCHAR(255) UNIQUE,
         skills TEXT[],
         interests TEXT[],
-        learning TEXT[]
+        learning TEXT[],
+        user_type VARCHAR(25),
       )
     `);
     console.log('Table "users" successfully created or already exists');

@@ -1,6 +1,6 @@
 import axios from "axios";
 import jwt from "jsonwebtoken";
-import { addUser, checkEmailExists } from "../../repositories/userDbFunctions";
+import { addFaculty, addUser, checkEmailExists } from "../../repositories/userDbFunctions";
 import {
   createUsersTable,
   createUserProjectsTable,
@@ -16,38 +16,6 @@ export const getUserInfoFromGoogle = async (access_token: string) => {
   return response.data;
 };
 
-export const generateJWT = (userInfo: any) => {
-  const user = {
-    email: userInfo.email,
-    name: userInfo.name,
-    rollNumber: userInfo.rollNumber,
-    batch: userInfo.batch,
-    branch: userInfo.branch,
-  };
-
-  if (!process.env.JWT_SECRET_KEY) {
-    throw new Error("JWT secret key is not defined");
-  }
-
-  return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: "24h" });
-};
-
-export const verifyJWT = async (sessionToken: string) => {
-  try {
-    if (!process.env.JWT_SECRET_KEY) {
-      throw new Error("JWT secret key is not defined");
-    }
-    const decoded = await jwt.verify(sessionToken, process.env.JWT_SECRET_KEY);
-    if (decoded) {
-      return decoded;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    throw new Error("Error verifying JWT (Unauthorized)");
-  }
-};
-
 export const storeUserData = async (userInfo: any) => {
   try {
     await createUsersTable();
@@ -57,22 +25,26 @@ export const storeUserData = async (userInfo: any) => {
     await createProjectApplicationsTable();
 
     const Email = userInfo.email;
-    const exists = await checkEmailExists(Email);
 
-    if (!exists) {
-      const [rollNumber, year, Branch] = await generateRollNumber(Email);
-      let name = userInfo.name;
-      if (Email.endsWith("@student.nitw.ac.in")) {
-        name = userInfo.name;
-      } else if (Email.endsWith("@iiitkottayam.ac.in")) {
-        name = `${userInfo.name.replace(/ -IIITK$/, "").replace(/"/g, "")}`;
+    if(Email.endsWith("@iiitkottayam.ac.in")) {
+      const userType = determineUserType(Email);
+      if (userType === "faculty") {
+        addFaculty(userInfo.name, Email, userType);
+      } else if (userType === "student") {
+        const [rollNumber, year, Branch] = await generateRollNumber(Email);
+        let name = userInfo.name;
+        if (Email.endsWith("@student.nitw.ac.in")) {
+          name = userInfo.name.split("_")[1].toUpperCase() + " " + "-NITW";
+        } else if (Email.endsWith("@iiitkottayam.ac.in")) {
+          name = `${userInfo.name.replace(/ -IIITK$/, "").replace(/"/g, "")}`;
+        }
+        const email = Email;
+        const rollnumber = rollNumber;
+        const batch = parseInt(year, 10); // Convert year to a number
+        const branch = Branch;
+    
+        await addUser(name, email, rollnumber, batch, branch, userType);
       }
-      const email = Email;
-      const rollnumber = rollNumber;
-      const batch = parseInt(year, 10); // Convert year to a number
-      const branch = Branch;
-
-      await addUser(name, email, rollnumber, batch, branch);
     }
   } catch (error) {
     console.error("Error storing user data:", error);
@@ -111,18 +83,60 @@ export const generateRollNumber = async (email: string) => {
     }
     const username = parts[0];
     const rollNumberMatch = username.match(
-      /\d{2}[a-zA-Z]{3}\d{2}[a-zA-Z]{1}\d{2}/
+      /\d{2}[a-zA-Z]{3}\d+[a-zA-Z]{0,2}\d+/
     );
     if (!rollNumberMatch) {
       throw new Error("Roll number not found in username");
     }
     const rollNumber = rollNumberMatch[0];
     const yearMatch = rollNumber.match(/^\d{2}/);
-    const branchMatch = rollNumber.match(/\d{2}([a-zA-Z]{3})/);
+    const branchMatch = rollNumber.match(/^\d{2}([a-zA-Z]{3})/);
     const year = yearMatch ? `20${yearMatch[0]}` : "";
     const branch = branchMatch ? branchMatch[1].toUpperCase() : "";
     return [rollNumber, year, branch];
   } else {
     throw new Error("Unsupported email domain");
+  }
+};
+
+export const generateJWT = (userInfo: any) => {
+  const user = {
+    email: userInfo.email,
+    name: userInfo.name,
+    rollNumber: userInfo.rollNumber,
+    batch: userInfo.batch,
+    branch: userInfo.branch,
+  };
+
+  if (!process.env.JWT_SECRET_KEY) {
+    throw new Error("JWT secret key is not defined");
+  }
+
+  return jwt.sign(user, process.env.JWT_SECRET_KEY, { expiresIn: "24h" });
+};
+
+export const verifyJWT = async (sessionToken: string) => {
+  try {
+    if (!process.env.JWT_SECRET_KEY) {
+      throw new Error("JWT secret key is not defined");
+    }
+    const decoded = await jwt.verify(sessionToken, process.env.JWT_SECRET_KEY);
+    if (decoded) {
+      return decoded;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    throw new Error("Error verifying JWT (Unauthorized)");
+  }
+};
+
+const determineUserType = (email: string): string => {
+  // Check for student email pattern (numbers in the local part)
+  const studentEmailPattern = /\d+/;
+  if (studentEmailPattern.test(email.split('@')[0])) {
+    return 'student';
+  } else {
+    return 'faculty';
   }
 };
