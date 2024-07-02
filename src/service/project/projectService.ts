@@ -19,6 +19,8 @@ import {
   checkApplicationIdExists,
   verifyApplicationOwner,
   getApplicantName,
+  checkApplicantAlreadyMember,
+  addMember,
 } from "../../repositories/projectDbFunctions";
 
 export const postProjectService = async (req: any, res: any) => {
@@ -243,6 +245,18 @@ export const acceptApplicantService = async (req: any, res: any) => {
       return;
     }
     await acceptApplicant(project_id, role_name, applicant_id);
+    if (
+      (await checkApplicantAlreadyMember(
+        project_id,
+        applicant_id,
+        role_name
+      )) === false
+    ) {
+      await addMember(project_id, applicant_id, role_name);
+      res.status(200).json("Applicant accepted successfully");
+    } else {
+      res.status(401).json("Applicant is already a member of this project");
+    }
     res.status(200).json("Applicant accepted successfully");
   } catch (error) {
     res.status(401).json("Error in acceptApplicantService");

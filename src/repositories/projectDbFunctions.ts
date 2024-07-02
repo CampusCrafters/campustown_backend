@@ -278,6 +278,9 @@ export const addApplication = async (
     if (!(await checkRoleExists(project_id, role))) {
       throw new Error("Role does not exist in the project");
     }
+    if (await checkApplicantAlreadyMember(user_id, project_id, role)) {
+      throw new Error("Applicant is already a member of the project");
+    }
     const query = {
       text: `
         INSERT INTO project_applications (user_id, applicant_name, project_id, role_name, status, applied_on)
@@ -494,5 +497,80 @@ export const getApplicantName = async (user_id: number) => {
   } catch (error: any) {
     console.error("Error getting applicant name in database:", error.message);
     throw new Error("Error getting applicant name in database");
+  }
+};
+
+export const checkApplicantAlreadyMember = async (
+  user_id: number,
+  project_id: number,
+  role: string
+) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+        SELECT 
+            EXISTS (
+                SELECT 
+                    1
+                FROM 
+                    projects
+                WHERE 
+                    project_id = $2 -- Use the project_id to filter the correct project
+                    AND EXISTS (
+                        SELECT 
+                            1
+                        FROM 
+                            jsonb_array_elements(members) AS member
+                        WHERE 
+                            member->>'role' = $3
+                            AND member->>'user_id'::int = $1
+                    )
+            ) AS is_member; -- Return the existence check as a boolean
+      `,
+      values: [user_id, project_id, role],
+    };
+    const result = await client.query(query);
+    client.release();
+
+    // Extract the boolean value from the result
+    return result.rows[0]?.is_member ?? false;
+  } catch (error: any) {
+    console.error(
+      "Error checking if applicant is already a member in database:",
+      error.message
+    );
+    throw new Error(
+      "Error checking if applicant is already a member in database"
+    );
+  }
+};
+
+export const addMember = async (
+  project_id: number,
+  user_id: number,
+  role: string
+) => {
+  try {
+    const client = await pool.connect();
+    const query = {
+      text: `
+        UPDATE projects
+        SET members = members || $1
+        WHERE project_id = $2
+      `,
+      values: [
+        {
+          user_id,
+          role,
+        },
+        project_id,
+      ],
+    };
+    await client.query(query);
+    client.release();
+  } catch (error: any) {
+    console.error("Error adding member in database:", error.message);
+    throw new Error("Error adding member in database");
   }
 };
