@@ -103,9 +103,12 @@ export const getProject = async (project_id: number) => {
       throw new Error('Project not found');
     }
 
+    // Ensure members is an array
+    const membersArray = project.members || [];
+
     // Fetch member details
     const members = await Promise.all(
-      project.members.map(async (member: any) => {
+      membersArray.map(async (member: any) => {
         const memberQuery = {
           text: `
             SELECT 
@@ -427,11 +430,15 @@ export const changeRole = async (
 };
 
 export const getApplicants = async (project_id: number) => {
-  console.log("Type of project_id:", typeof project_id, "Value:", project_id);
   try {
     const client = await pool.connect();
     const query = {
-      text: "SELECT * FROM project_applications WHERE project_id = $1",
+      text: `
+        SELECT pa.*, u.profile_picture, u.batch
+        FROM project_applications pa
+        INNER JOIN users u ON pa.user_id = u.user_id
+        WHERE pa.project_id = $1
+      `,
       values: [project_id],
     };
     const result = await client.query(query);
