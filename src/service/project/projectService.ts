@@ -220,14 +220,10 @@ export const editApplicationService = async (req: any, res: any) => {
 export const getApplicantsService = async (req: any, res: any) => {
   try {
     const project_id = req.query.project_id;
-    // Convert project_id to integer
     const projectIdNumber = parseInt(project_id as string, 10);
-
-    // Check if the conversion is successful
     if (isNaN(projectIdNumber)) {
       throw new Error(`Invalid project_id: ${project_id}`);
     }
-    console.log("project_id", projectIdNumber);
     const applicants = await getApplicants(projectIdNumber);
     res.status(200).json(applicants);
   } catch (error) {
