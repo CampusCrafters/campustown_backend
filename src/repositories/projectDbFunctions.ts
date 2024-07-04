@@ -65,7 +65,6 @@ interface ProjectInfo {
 }
 
 export const getProject = async (project_id: number) => {
-  console.log("getProject");
   try {
     const client = await pool.connect();
 
