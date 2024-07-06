@@ -26,7 +26,7 @@ export async function createUsersTable(): Promise<void> {
         skills TEXT[],
         interests TEXT[],
         learning TEXT[],
-        user_type VARCHAR(25),
+        user_type VARCHAR(25)
       )
     `);
     console.log('Table "users" successfully created or already exists');
