@@ -48,7 +48,7 @@ export const getMyProjects = async (user_id: number) => {
   try {
     const client = await pool.connect();
     const query = {
-      text: "SELECT * FROM projects WHERE host_id = $1",
+      text: "SELECT projects.*,users.name, users.profile_picture FROM projects  INNER JOIN users ON projects.host_id = users.user_id WHERE host_id = $1",
       values: [user_id],
     };
     const result = await client.query(query);
@@ -65,7 +65,6 @@ interface ProjectInfo {
 }
 
 export const getProject = async (project_id: number) => {
-  console.log("getProject");
   try {
     const client = await pool.connect();
 
@@ -100,7 +99,7 @@ export const getProject = async (project_id: number) => {
     const project = projectResult.rows[0];
 
     if (!project) {
-      throw new Error('Project not found');
+      throw new Error("Project not found");
     }
 
     // Ensure members is an array
