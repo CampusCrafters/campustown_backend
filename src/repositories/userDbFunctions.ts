@@ -12,7 +12,7 @@ export const getAllUsers = async () => {
     console.error("Error getting all users from database:", error);
     throw new Error("Error getting all users from database");
   }
-}
+};
 
 export const addUser = async (
   name: string,
@@ -57,7 +57,7 @@ export const addFaculty = async (
       client.release();
     }
   }
-}
+};
 
 export const getUserProfile = async (email: string) => {
   try {
@@ -87,7 +87,7 @@ export const getUserProfileById = async (user_id: number) => {
     console.error("Error getting user profile from database:", error);
     throw new Error("Error getting user profile from database");
   }
-}
+};
 
 export const setProfilePicture = async (
   user_id: number,
@@ -308,10 +308,15 @@ export const getMyApplications = async (userId: number) => {
   try {
     const client = await pool.connect();
     const query = `
-      SELECT pa.*, p.project_title
+      SELECT 
+        pa.*, 
+        p.project_title, 
+        u.name AS host_name
       FROM project_applications pa
       JOIN projects p ON pa.project_id = p.project_id
+      JOIN users u ON p.host_id = u.user_id
       WHERE pa.user_id = $1
+      
     `;
     const values = [userId];
     const result = await client.query(query, values);
