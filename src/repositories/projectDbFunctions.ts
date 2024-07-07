@@ -260,8 +260,6 @@ export const acceptApplicant = async (
     };
     await client.query(updateProjectApplicationsTable);
 
-    // Add the accepted applicant as a member of the project
-    await addMember(project_id, applicant_id, role_name);
     client.release();
   } catch (error: any) {
     console.error("Error accepting applicant in database:", error.message);
