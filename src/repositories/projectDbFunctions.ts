@@ -254,12 +254,12 @@ export const acceptApplicant = async (
         project_id,
         applicant_id,
         role_name,
-        "Accepted", // Assuming status is of type string
+        "Accepted",
         new Date().toISOString(),
       ],
     };
     await client.query(updateProjectApplicationsTable);
-
+    await addMember(project_id, applicant_id, role_name);
     client.release();
   } catch (error: any) {
     console.error("Error accepting applicant in database:", error.message);

@@ -243,8 +243,6 @@ export const acceptApplicantService = async (req: any, res: any) => {
       return;
     }
     await acceptApplicant(project_id, role_name, applicant_id);
-    await addMember(project_id, applicant_id, role_name);
-    res.status(200).json("Applicant accepted successfully");
 
     res.status(200).json("Applicant accepted successfully");
   } catch (error) {
