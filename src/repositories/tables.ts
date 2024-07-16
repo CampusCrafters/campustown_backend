@@ -116,6 +116,38 @@ export async function createProjectsTable(): Promise<void> {
   }
 }
 
+export async function createEventsTable(): Promise<void> {
+  try {
+    const query = `
+      CREATE TABLE IF NOT EXISTS events (
+        event_id SERIAL PRIMARY KEY,
+        host_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE NOT NULL,
+        event_name VARCHAR(255) NOT NULL,
+        domain VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        link VARCHAR(255) DEFAULT NULL,
+        posted_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        start_date TIMESTAMP NOT NULL,
+        start_time TIME NOT NULL,
+        end_date TIMESTAMP DEFAULT NULL,
+        end_time TIME DEFAULT NULL,
+        location VARCHAR(255) NOT NULL,
+        speakers TEXT[] DEFAULT '{}',
+        guests TEXT[] DEFAULT '{}',
+        chief_guests TEXT[] DEFAULT '{}',
+        club_name VARCHAR(255) DEFAULT NULL,
+        department VARCHAR(255) DEFAULT NULL,
+        edited_on TIMESTAMP DEFAULT NULL
+      );
+    `;
+    await pool.query(query);
+    console.log('Table "events" successfully created or already exists');
+  } catch (error) {
+    console.error(`Error creating events table: ${error}`);
+    throw error;
+  }
+}
+
 export const createProjectApplicationsTable = async (): Promise<void> => {
   try {
     const query = `
