@@ -254,11 +254,12 @@ export const acceptApplicant = async (
         project_id,
         applicant_id,
         role_name,
-        "Accepted", // Assuming status is of type string
+        "Accepted",
         new Date().toISOString(),
       ],
     };
     await client.query(updateProjectApplicationsTable);
+    await addMember(project_id, applicant_id, role_name);
     client.release();
   } catch (error: any) {
     console.error("Error accepting applicant in database:", error.message);
@@ -436,7 +437,7 @@ export const getApplicants = async (project_id: number) => {
         SELECT pa.*, u.profile_picture, u.batch
         FROM project_applications pa
         INNER JOIN users u ON pa.user_id = u.user_id
-        WHERE pa.project_id = $1
+        WHERE pa.project_id = $1 and pa.status = 'Pending' or pa.status = 'Shortlisted'
       `,
       values: [project_id],
     };
@@ -569,6 +570,8 @@ export const checkApplicantAlreadyMember = async (
   project_id: number,
   role: string
 ) => {
+  console.log(user_id, project_id, role);
+  console.log(typeof user_id, typeof project_id, typeof role);
   try {
     const client = await pool.connect();
     const query = {
@@ -588,7 +591,7 @@ export const checkApplicantAlreadyMember = async (
                             jsonb_array_elements(members) AS member
                         WHERE 
                             member->>'role' = $3
-                            AND member->>'user_id'::int = $1
+                            AND member->>'user_id'= $1::text
                     )
             ) AS is_member; -- Return the existence check as a boolean
       `,
