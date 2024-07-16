@@ -7,6 +7,7 @@ import {
   createUserExperienceTable,
   createProjectsTable,
   createProjectApplicationsTable,
+  createEventsTable,
 } from "../../repositories/tables";
 
 export const getUserInfoFromGoogle = async (access_token: string) => {
@@ -22,6 +23,7 @@ export const storeUserData = async (userInfo: any) => {
     await createUserProjectsTable();
     await createUserExperienceTable();
     await createProjectsTable();
+    await createEventsTable();
     await createProjectApplicationsTable();
 
     const Email = userInfo.email;
