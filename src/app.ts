@@ -12,7 +12,7 @@ if (!PORT || !DATABASE_URL) {
 }
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://campustown.in"],
+  origin: ["http://localhost:5173", "https://campustown.in", "https://match.backend.campustown.in"],
   credentials: true,
 };
 
