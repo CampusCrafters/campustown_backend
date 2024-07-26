@@ -70,6 +70,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         // Set the cookie
         await res.cookie("jwt", verifyToken, {
           //httpOnly: true,
+          domain: ".campustown.in",
           secure: true,
           sameSite: "none",
         });
