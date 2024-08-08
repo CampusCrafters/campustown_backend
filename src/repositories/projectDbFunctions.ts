@@ -437,7 +437,7 @@ export const getApplicants = async (project_id: number) => {
         SELECT pa.*, u.profile_picture, u.batch
         FROM project_applications pa
         INNER JOIN users u ON pa.user_id = u.user_id
-        WHERE pa.project_id = $1 and pa.status = 'Pending' or pa.status = 'Shortlisted'
+        WHERE pa.project_id = $1
       `,
       values: [project_id],
     };
