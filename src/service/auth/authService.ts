@@ -56,7 +56,7 @@ export const getTokensAndStoreDataService = async (req: any, res: any) => {
         }
       }
       try {
-        if (!await checkEmailExists(email)) {
+        if (!(await checkEmailExists(email))) {
           await storeUserData(userInfo);
         }
       } catch (error: any) {
@@ -117,6 +117,8 @@ export const verifyTokenForChatService = async (req: any, res: any) => {
       res.status(200).json({ decoded: decoded });
     }
   } catch (error: any) {
-    res.status(500).json({ "Error in verify token for chat service": error.message });
+    res
+      .status(500)
+      .json({ "Error in verify token for chat service": error.message });
   }
-}
+};
